@@ -12,6 +12,10 @@
 #define SERVO_FREQ 50  // Analog servos run at ~50 Hz updates
 #define R_MOTOR_CH 21
 #define L_MOTOR_CH 20
+#define CH1 15
+#define CH2 16
+#define CH3 17
+#define CH4 22
 
 
 Servo headspin;
@@ -28,7 +32,7 @@ void switch_init() {
 
 void head_set(int input) {
   if (switch_enabled()) {
-    headspin.write(input);
+    headspin.write(map(input, -127, 127, 20, 170));
   } else {
     headspin.write(0);
   }
@@ -55,16 +59,26 @@ void drive_init() {
 }
 void drive_set(double l, double r) {
   if (switch_enabled()) {
-    r = r - 5;
+    l = l - 5;
     L_MOTOR.write(map(l, -127, 127, 0, 180));  // Send the signal to the ESC
     R_MOTOR.write(map(r, -127, 127, 0, 180));  // Send the signal to the ESC
   } else {
-    r = 0;
     l = 0;
-    r = r - 5;
+    r = 0;
+    l = l - 5;
     L_MOTOR.write(map(l, -127, 127, 0, 180));  // Send the signal to the ESC
     R_MOTOR.write(map(r, -127, 127, 0, 180));  // Send the signal to the ESC
   }
+}
+
+void receiver_init() {
+  pinMode(CH1, INPUT);
+  pinMode(CH2, INPUT);
+  pinMode(CH3, INPUT);
+  pinMode(CH4, INPUT);
+}
+int ch(int channel) {
+  return map(pulseIn(channel, HIGH, 30000), 990, 2014, -127, 127);
 }
 
 void setup() {
@@ -73,23 +87,18 @@ void setup() {
   head_init();
   pwm_init();
   drive_init();
+  receiver_init();
   delay(10);
 }
 
 void loop() {
-  printf("%i\n", switch_enabled());
+  int left = ch(CH3) + ch(CH4);
+  int right = ch(CH3) - ch(CH4);
+  head_set(ch(CH1));
+  set_tilt(ch(CH2));
+  drive_set(left, right);
 
-  drive_set(40, 40);
 
-  head_set(160);
 
-  for (uint16_t pulselen = 0; pulselen < 127; pulselen++) {
-    set_tilt(pulselen);
-  }
-
-  delay(100);
-  for (uint16_t pulselen = 127; pulselen > 0; pulselen--) {
-    set_tilt(pulselen);
-  }
-  delay(100);
+  delay(10);
 }
