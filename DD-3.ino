@@ -60,6 +60,7 @@ void drive_init() {
 void drive_set(double l, double r) {
   if (switch_enabled()) {
     l = l - 5;
+    r = r * 1.2;
     L_MOTOR.write(map(l, -127, 127, 0, 180));  // Send the signal to the ESC
     R_MOTOR.write(map(r, -127, 127, 0, 180));  // Send the signal to the ESC
   } else {
@@ -71,6 +72,14 @@ void drive_set(double l, double r) {
   }
 }
 
+double FWD_SCALE = 5.0;
+double TURN_SCALE = 8.0;
+double fwd_curve(double x) {
+  return (powf(2.718, -(FWD_SCALE / 10)) + powf(2.718, (fabs(x) - 127) / 10) * (1 - powf(2.718, -(FWD_SCALE / 10)))) * x;
+}
+double turn_curve(double x) {
+  return (powf(2.718, -(TURN_SCALE / 10)) + powf(2.718, (fabs(x) - 127) / 10) * (1 - powf(2.718, -(TURN_SCALE / 10)))) * x;
+}
 void receiver_init() {
   pinMode(CH1, INPUT);
   pinMode(CH2, INPUT);
@@ -92,12 +101,13 @@ void setup() {
 }
 
 void loop() {
-  int left = ch(CH3) + ch(CH4);
-  int right = ch(CH3) - ch(CH4);
+  double ch3 = fwd_curve(ch(CH3));
+  double ch4 = turn_curve(ch(CH4));
+  int left = ch3 + ch4;
+  int right = ch3 - ch4;
   head_set(ch(CH1));
   set_tilt(ch(CH2));
   drive_set(left, right);
-
 
 
   delay(10);
