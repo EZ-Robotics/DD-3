@@ -2,7 +2,7 @@
 
 #define SERVO_FREQ 50  // Analog servos run at ~50 Hz updates
 
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x41);
 
 void pwm_init() {
   pwm.begin();
