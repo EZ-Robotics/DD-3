@@ -3,6 +3,7 @@
 #include <Adafruit_PWMServoDriver.h>
 
 #define SWITCH 0
+
 #define HEAD_SPIN A0
 #define HEAD_TILT 15   // 16th channel on PCA9685
 #define SERVOMIN 350   // This is the 'minimum' pulse length count (out of 4096)
@@ -10,6 +11,8 @@
 #define USMIN 600      // This is the rounded 'minimum' microsecond length based on the minimum pulse of 150
 #define USMAX 2400     // This is the rounded 'maximum' microsecond length based on the maximum pulse of 600
 #define SERVO_FREQ 50  // Analog servos run at ~50 Hz updates
+Servo headspin;
+
 #define R_MOTOR_CH 21
 #define L_MOTOR_CH 20
 #define CH1 15
@@ -17,9 +20,9 @@
 #define CH3 17
 #define CH4 22
 
+#include <Audio.h>
 
-Servo headspin;
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
 Servo L_MOTOR;  // create servo object to control the ESC
 Servo R_MOTOR;  // create servo object to control the ESC
 
@@ -27,7 +30,7 @@ bool switch_enabled() {
   return digitalRead(SWITCH);
 }
 void switch_init() {
-  headspin.attach(HEAD_SPIN);
+  pinMode(SWITCH, INPUT);
 }
 
 void head_set(int input) {
