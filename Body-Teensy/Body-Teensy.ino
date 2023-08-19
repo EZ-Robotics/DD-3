@@ -2,9 +2,9 @@
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 
-#define SWITCH 0
+#define SWITCH 2
 
-#define HEAD_SPIN A0
+#define HEAD_SPIN 3
 Servo headspin;
 
 #define HEAD_TILT 15   // 16th channel on PCA9685
@@ -15,8 +15,8 @@ Servo headspin;
 #define R_MOTOR_CH 21
 #define L_MOTOR_CH 20
 #define CH1 15
-#define CH2 16
-#define CH3 17
+#define CH2 14
+#define CH3 23
 #define CH4 22
 
 #include <Audio.h>
@@ -99,10 +99,12 @@ void setup() {
   pwm_init();
   drive_init();
   receiver_init();
+
   delay(10);
 }
 
 void loop() {
+  
   double ch3 = fwd_curve(ch(CH3));
   double ch4 = turn_curve(ch(CH4));
   int left = ch3 + ch4;
@@ -110,7 +112,7 @@ void loop() {
   head_set(ch(CH1));
   set_tilt(ch(CH2));
   drive_set(left, right);
-
+  
 
   delay(10);
 }
