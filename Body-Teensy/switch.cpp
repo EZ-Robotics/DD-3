@@ -1,5 +1,6 @@
-#include "switch.hpp"
 #include <Wire.h>
+
+#include "switch.hpp"
 
 #define SWITCH 2
 
