@@ -14,8 +14,11 @@ SoftEasyTransfer ET;
 struct SEND_DATA_STRUCTURE{
   //put your variable definitions here for the data you want to send
   //THIS MUST BE EXACTLY THE SAME ON THE OTHER ARDUINO
-  int16_t blinks;
-  int16_t pause;
+  bool switch_;
+  int16_t eye_y_;
+  int16_t eye_x_;
+  int16_t eyebrow_left_;
+  int16_t eyebrow_right_;
 };
 //give a name to the group of data
 SEND_DATA_STRUCTURE mydata;
@@ -141,24 +144,40 @@ void loop() {
   */
 
     //this is how you access the variables. [name of the group].[variable name]
-  mydata.blinks = random(5);
-  mydata.pause = random(5);
+  /*mydata.eye_y_ = random(256) - 127;
+  mydata.eye_x_ = random(256) - 127;
+  mydata.eyebrow_left_ = random(256) - 127;
+  mydata.eyebrow_right_ = random(256) - 127;*/
+  mydata.switch_ = switch_enabled();
+  //for (int i = -127; i < 127; i+=2) {
+    //eye_y_set(i);
+    //eye_x_set(i);
+    //eyebrow_right_set(i);
+    //eyebrow_left_set(i);
+    //delay(10);
+    //mydata.eyebrow_right_ = i;
+    //ET.sendData();
+    //delay(1);
+  //}
+  //delay(125);
+ 
+  //for (int i = 127; i > -127; i-=2) {
+    //eye_y_set(i);
+    //eye_x_set(i);
+    //eyebrow_right_set(i);
+    //eyebrow_left_set(i);
+    //delay(10);
+    //mydata.eyebrow_right_ = i;
+    //ET.sendData();
+    //delay(1);
+  //}
+  delay(125);
   //send the data
-  ET.sendData();
-  Serial.println(mydata.blinks);
-  Serial.println(mydata.pause);
-  Serial.println();
-  
-  //Just for fun, we will blink it out too
-   for(int i = mydata.blinks; i>0; i--){
-      digitalWrite(13, HIGH);
-      delay(mydata.pause * 100);
-      digitalWrite(13, LOW);
-      delay(mydata.pause * 100);
-    }
-  
-  delay(5000);
-  
-
-  delay(10);
+  //ET.sendData();
+  //Serial.println(mydata.switch_);
+  //Serial.println(mydata.eye_y_);
+  //Serial.println(mydata.eye_x_);
+  //Serial.println(mydata.eyebrow_left_);
+  //Serial.println(mydata.eyebrow_right_);
+  //Serial.println();
 }
