@@ -2,33 +2,7 @@
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 
-#include <SoftEasyTransfer.h>
-/*   For Arduino 1.0 and newer, do this:   */
-#include <SoftwareSerial.h>
-SoftwareSerial mySerial(0, 1);
-/*   For Arduino 22 and older, do this:   */
-//#include <NewSoftSerial.h>
-//NewSoftSerial mySerial(2, 3);
-//create object
-SoftEasyTransfer ET; 
-struct SEND_DATA_STRUCTURE{
-  //put your variable definitions here for the data you want to send
-  //THIS MUST BE EXACTLY THE SAME ON THE OTHER ARDUINO
-  bool switch_;
-  int16_t eye_y_;
-  int16_t eye_x_;
-  int16_t eyebrow_left_;
-  int16_t eyebrow_right_;
-};
-//give a name to the group of data
-SEND_DATA_STRUCTURE mydata;
-void easytransfer_init() {
-  mySerial.begin(9600);
-  //start the library, pass in the data details and the name of the serial port.
-  ET.begin(details(mydata), &mySerial);
-  pinMode(13, OUTPUT);
-  randomSeed(analogRead(0));
-}
+#include "body_to_head.hpp"
 
 #define SWITCH 2
 
@@ -127,7 +101,7 @@ void setup() {
   pwm_init();
   drive_init();
   receiver_init();
-  easytransfer_init();
+  body_to_head_init();
 
   delay(10);
 }
@@ -148,7 +122,9 @@ void loop() {
   mydata.eye_x_ = random(256) - 127;
   mydata.eyebrow_left_ = random(256) - 127;
   mydata.eyebrow_right_ = random(256) - 127;*/
-  mydata.switch_ = switch_enabled();
+  BtH_data.switch_ = switch_enabled();
+  body_to_head_send();
+
   //for (int i = -127; i < 127; i+=2) {
     //eye_y_set(i);
     //eye_x_set(i);
@@ -171,7 +147,7 @@ void loop() {
     //ET.sendData();
     //delay(1);
   //}
-  delay(125);
+  delay(20);
   //send the data
   //ET.sendData();
   //Serial.println(mydata.switch_);

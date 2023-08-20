@@ -7,10 +7,10 @@
 SoftwareSerial mySerial(0, 1);
  
 //create object
-SoftEasyTransfer ET; 
+SoftEasyTransfer BtH; 
  
-struct RECEIVE_DATA_STRUCTURE{
-  //put your variable definitions here for the data you want to receive
+struct SEND_DATA_STRUCTURE{
+  //put your variable definitions here for the data you want to send
   //THIS MUST BE EXACTLY THE SAME ON THE OTHER ARDUINO
   bool switch_;
   int16_t eye_y_;
@@ -18,15 +18,13 @@ struct RECEIVE_DATA_STRUCTURE{
   int16_t eyebrow_left_;
   int16_t eyebrow_right_;
 };
-
- 
 //give a name to the group of data
-RECEIVE_DATA_STRUCTURE mydata;
+SEND_DATA_STRUCTURE BtH_data;
 //give a name to the group of data
 void easytransfer_init() {
   mySerial.begin(9600);
   //start the library, pass in the data details and the name of the serial port.
-  ET.begin(details(mydata), &mySerial);
+  BtH.begin(details(BtH_data), &mySerial);
 }
  
 #define SERVO_FREQ 50  // Analog servos run at ~50 Hz updates
@@ -41,7 +39,7 @@ void pwm_init() {
   pwm.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
 }
 
-bool switch_enabled() { return mydata.switch_; }
+bool switch_enabled() { return BtH_data.switch_; }
  
 // Eye Y
 #define EYE_Y 12
@@ -97,7 +95,7 @@ void setup() {
  
 void loop() {
   //check and see if a data packet has come in. 
-  if(ET.receiveData()){
+  if(BtH.receiveData()){
  
     //this is how you access the variables. [name of the group].[variable name]
     //since we have data, we will blink it out. 
@@ -107,17 +105,17 @@ void loop() {
     Serial.println(mydata.eyebrow_right_);
     Serial.println(mydata.eyebrow_left_);
     Serial.println();*/
-  Serial.println(mydata.switch_);
-  Serial.println(mydata.eye_y_);
-  Serial.println(mydata.eye_x_);
-  Serial.println(mydata.eyebrow_left_);
-  Serial.println(mydata.eyebrow_right_);
+  Serial.println(BtH_data.switch_);
+  Serial.println(BtH_data.eye_y_);
+  Serial.println(BtH_data.eye_x_);
+  Serial.println(BtH_data.eyebrow_left_);
+  Serial.println(BtH_data.eyebrow_right_);
   Serial.println();
 
-  eye_y_set(mydata.eye_y_);
-  eye_x_set(mydata.eye_x_);
-  eyebrow_left_set(mydata.eyebrow_left_);
-  eyebrow_right_set(mydata.eyebrow_right_);
+  eye_y_set(BtH_data.eye_y_);
+  eye_x_set(BtH_data.eye_x_);
+  eyebrow_left_set(BtH_data.eyebrow_left_);
+  eyebrow_right_set(BtH_data.eyebrow_right_);
   
   }
  
