@@ -3,8 +3,9 @@
 #include <Adafruit_PWMServoDriver.h>
 
 #include "body_to_head.hpp"
-
-#define SWITCH 2
+#include "eye.hpp"
+#include "eyebrows.hpp"
+#include "switch.hpp"
 
 #define HEAD_SPIN 3
 Servo headspin;
@@ -27,12 +28,7 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
 Servo L_MOTOR;  // create servo object to control the ESC
 Servo R_MOTOR;  // create servo object to control the ESC
 
-bool switch_enabled() {
-  return digitalRead(SWITCH);
-}
-void switch_init() {
-  pinMode(SWITCH, INPUT);
-}
+
 
 void head_set(int input) {
   if (switch_enabled()) {
@@ -122,7 +118,10 @@ void loop() {
   mydata.eye_x_ = random(256) - 127;
   mydata.eyebrow_left_ = random(256) - 127;
   mydata.eyebrow_right_ = random(256) - 127;*/
-  BtH_data.switch_ = switch_enabled();
+  eye_y_set(127);
+  eye_x_set(127);
+  eyebrow_right_set(127);
+  eyebrow_left_set(127);
   body_to_head_send();
 
   //for (int i = -127; i < 127; i+=2) {

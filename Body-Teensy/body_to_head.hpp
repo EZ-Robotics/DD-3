@@ -5,7 +5,6 @@
 struct SEND_DATA_STRUCTURE{
   //put your variable definitions here for the data you want to send
   //THIS MUST BE EXACTLY THE SAME ON THE OTHER ARDUINO
-  bool switch_;
   int16_t eye_y_;
   int16_t eye_x_;
   int16_t eyebrow_left_;

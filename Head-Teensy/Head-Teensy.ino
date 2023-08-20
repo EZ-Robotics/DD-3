@@ -12,7 +12,6 @@ SoftEasyTransfer BtH;
 struct SEND_DATA_STRUCTURE{
   //put your variable definitions here for the data you want to send
   //THIS MUST BE EXACTLY THE SAME ON THE OTHER ARDUINO
-  bool switch_;
   int16_t eye_y_;
   int16_t eye_x_;
   int16_t eyebrow_left_;
@@ -38,51 +37,29 @@ void pwm_init() {
   pwm.setOscillatorFrequency(27000000);
   pwm.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
 }
-
-bool switch_enabled() { return BtH_data.switch_; }
  
 // Eye Y
 #define EYE_Y 12
-#define EYE_Y_MIN 150
-#define EYE_Y_MAX 300
 void eye_y_set(int input) {
-  if (switch_enabled()) {
-    input = map(input, -127, 127, EYE_Y_MIN, EYE_Y_MAX);
     pwm.setPWM(EYE_Y, 0, input);
-  }
 }
  
 // Eye X
 #define EYE_X 13
-#define EYE_X_MIN 150
-#define EYE_X_MAX 300
 void eye_x_set(int input) {
-  if (switch_enabled()) {
-    input = map(input, -127, 127, EYE_X_MIN, EYE_X_MAX);
     pwm.setPWM(EYE_X, 0, input);
-  }
 }
  
 // Eyebrow Right
 #define EYEBROW_RIGHT 0
-#define EYEBROW_RIGHT_MIN 300
-#define EYEBROW_RIGHT_MAX  400
 void eyebrow_right_set(int input) {
-  if (switch_enabled()) {
-    input = map(input, -127, 127, EYEBROW_RIGHT_MIN, EYEBROW_RIGHT_MAX);
     pwm.setPWM(EYEBROW_RIGHT, 0, input);
-  }
 }
  
 // Eyebrow Right
 #define EYEBROW_LEFT 1
-#define EYEBROW_LEFT_MIN 150
-#define EYEBROW_LEFT_MAX  200
 void eyebrow_left_set(int input) {
-  if (switch_enabled()) {
-    input = map(input, -127, 127, EYEBROW_LEFT_MAX, EYEBROW_LEFT_MIN);
     pwm.setPWM(EYEBROW_LEFT, 0, input);
-  }
 }
  
  
@@ -105,7 +82,6 @@ void loop() {
     Serial.println(mydata.eyebrow_right_);
     Serial.println(mydata.eyebrow_left_);
     Serial.println();*/
-  Serial.println(BtH_data.switch_);
   Serial.println(BtH_data.eye_y_);
   Serial.println(BtH_data.eye_x_);
   Serial.println(BtH_data.eyebrow_left_);
