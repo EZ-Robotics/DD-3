@@ -1,4 +1,5 @@
 #include "body_to_head.hpp"
+#include "joysticks.hpp"
 #include "switch.hpp"
 
 // Because the servos have linkages that aren't perfect, the servos aren't 1:1 to eye movement

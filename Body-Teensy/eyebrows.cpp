@@ -8,8 +8,8 @@
 void eyebrow_right_set(int input) {
   if (!switch_enabled()) return;
 
-  input = map(input, -127, 127, EYEBROW_RIGHT_MIN, EYEBROW_RIGHT_MAX);
-  BtH_data.eyebrow_right_ = input;
+  input = map(input, -127, 127, EYEBROW_RIGHT_MIN, EYEBROW_RIGHT_MAX);  // Translate -127-127 to min-max
+  BtH_data.eyebrow_right_ = input;                                      // Output for body-head communication
 }
 
 // Eyebrow Left
@@ -18,8 +18,8 @@ void eyebrow_right_set(int input) {
 void eyebrow_left_set(int input) {
   if (!switch_enabled()) return;
 
-  input = map(input, -127, 127, EYEBROW_LEFT_MIN, EYEBROW_LEFT_MAX);
-  BtH_data.eyebrow_left_ = input;
+  input = map(input, -127, 127, EYEBROW_LEFT_MIN, EYEBROW_LEFT_MAX);  // Translate -127-127 to min-max
+  BtH_data.eyebrow_left_ = input;                                     // Output for body-head communication
 }
 
 void eyebrows_runtime() {
