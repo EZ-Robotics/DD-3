@@ -18,19 +18,16 @@ void setup() {
   delay(10);
 }
 
-void loop() {
-  double ch3 = joystick_curve_fwd(joystick_channel(CH3));
-  double ch4 = joystick_curve_turn(joystick_channel(CH4));
-  int left = ch3 + ch4;
-  int right = ch3 - ch4;
-  head_spin_set(joystick_channel(CH1));
-  head_tilt_set(joystick_channel(CH2));
-  drive_set(left, right);
+int test = 127;
 
-  /*eye_y_set(127);
-  eye_x_set(127);
-  eyebrow_right_set(127);
-  eyebrow_left_set(127);*/
+void loop() {
+  head_tilt_runtime();
+  head_spin_runtime();
+  // drive_runtime();
+
+  eye_runtime();
+  eyebrows_runtime();
+
   body_to_head_send();
 
   delay(20);  // This must be longer then Head-Teensy.ino delay!

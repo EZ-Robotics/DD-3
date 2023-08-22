@@ -1,28 +1,27 @@
 #include <Adafruit_PWMServoDriver.h>
 #include <SoftEasyTransfer.h>
+#include <SoftwareSerial.h>
 #include <Wire.h>
 
-/*   For Arduino 1.0 and newer, do this:   */
-#include <SoftwareSerial.h>
 SoftwareSerial mySerial(0, 1);
+
+// Based on
+// https://github.com/madsci1016/Arduino-EasyTransfer/tree/master/SoftEasyTransfer
 
 // create object
 SoftEasyTransfer BtH;
 
 struct SEND_DATA_STRUCTURE {
-  // put your variable definitions here for the data you want to send
-  // THIS MUST BE EXACTLY THE SAME ON THE OTHER ARDUINO
   int16_t eye_y_;
   int16_t eye_x_;
   int16_t eyebrow_left_;
   int16_t eyebrow_right_;
 };
-// give a name to the group of data
+
 SEND_DATA_STRUCTURE BtH_data;
-// give a name to the group of data
+
 void easytransfer_init() {
   mySerial.begin(9600);
-  // start the library, pass in the data details and the name of the serial port.
   BtH.begin(details(BtH_data), &mySerial);
 }
 
@@ -72,19 +71,13 @@ void setup() {
 void loop() {
   // check and see if a data packet has come in.
   if (BtH.receiveData()) {
-    // this is how you access the variables. [name of the group].[variable name]
-    // since we have data, we will blink it out.
-    /*Serial.println(mydata.switch_);
-    Serial.println(mydata.eye_y_);
-    Serial.println(mydata.eye_x_);
-    Serial.println(mydata.eyebrow_right_);
-    Serial.println(mydata.eyebrow_left_);
-    Serial.println();*/
+    /*
     Serial.println(BtH_data.eye_y_);
     Serial.println(BtH_data.eye_x_);
     Serial.println(BtH_data.eyebrow_left_);
     Serial.println(BtH_data.eyebrow_right_);
     Serial.println();
+    */
 
     eye_y_set(BtH_data.eye_y_);
     eye_x_set(BtH_data.eye_x_);
@@ -92,29 +85,6 @@ void loop() {
     eyebrow_right_set(BtH_data.eyebrow_right_);
   }
 
-  // Serial.println();
-  // this is how you access the variables. [name of the group].[variable name]
-
-  // put your main code here, to run repeatedly:
-
-  // for (int i = -127; i < 127; i+=2) {
-  // eye_y_set(i);
-  // eye_x_set(i);
-  // eyebrow_right_set(i);
-  // eyebrow_left_set(i);
-  // delay(10);
-  // delay(1);
-  //}
-  // delay(125);
-
-  // for (int i = 127; i > -127; i-=2) {
-  // eye_y_set(i);
-  // eye_x_set(i);
-  // eyebrow_right_set(i);
-  // eyebrow_left_set(i);
-  // delay(10);
-  // delay(1);
-  //}
   delay(10);
 }
 
