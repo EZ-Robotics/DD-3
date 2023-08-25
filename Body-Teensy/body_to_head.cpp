@@ -9,7 +9,7 @@
 SEND_DATA_STRUCTURE BtH_data;
 SoftEasyTransfer BtH;
 
-SoftwareSerial mySerial(0, 1);
+SoftwareSerial mySerial(2, 3);
 
 void body_to_head_init() {
   mySerial.begin(9600);

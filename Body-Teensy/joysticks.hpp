@@ -1,10 +1,10 @@
 #pragma once
 
 // Ports for receiver -> teensy
-#define CH1 15
-#define CH2 14
-#define CH3 23
-#define CH4 22
+#define CH1 A1
+#define CH2 A0
+#define CH3 A3
+#define CH4 A2
 
 void joystick_init();
 

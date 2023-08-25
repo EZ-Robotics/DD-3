@@ -5,8 +5,8 @@
 #include "switch.hpp"
 
 // Motor ports
-#define R_MOTOR_CH 21
-#define L_MOTOR_CH 20
+#define R_MOTOR_CH A6
+#define L_MOTOR_CH A7
 
 Servo L_MOTOR;  // create servo object to control the ESC
 Servo R_MOTOR;  // create servo object to control the ESC
@@ -49,8 +49,8 @@ void drive_set(double l, double r) {
   }
   l_target = l;
   r_target = r;
-  double max = std::fmax(fabs(l_target), fabs(r_target));
-  double min = std::fmin(fabs(l_target), fabs(r_target));
+  double max = fmax(fabs(l_target), fabs(r_target));
+  double min = fmin(fabs(l_target), fabs(r_target));
   double l_add = MAX, r_add = MAX;
   if (fabs(l_target) > fabs(r_target)) {
     l_add = MAX;
