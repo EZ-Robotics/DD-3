@@ -2,7 +2,7 @@
 
 #include "switch.hpp"
 
-#define SWITCH 3
+#define SWITCH 4
 
 bool switch_enabled() {
   return digitalRead(SWITCH);

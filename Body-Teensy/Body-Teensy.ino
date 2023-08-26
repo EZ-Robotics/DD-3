@@ -21,12 +21,12 @@ void setup() {
   delay(10);
 }
 void loop() {
-  // head_tilt_runtime();
-  // head_spin_runtime();
-  // drive_runtime();
+  head_tilt_runtime();
+  head_spin_runtime();
+  drive_runtime();
 
   // Serial.sprintf("L %i   R %i\n", joystick_channel(CH1), joystick_channel(CH2));
-  Serial.println(joystick_channel(CH1));
+  // Serial.println(joystick_channel(CH1));
   // Serial.println(joystick_channel(CH2));
 
   // eye_runtime();

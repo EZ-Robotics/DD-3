@@ -4,7 +4,7 @@
 #include "joysticks.hpp"
 #include "switch.hpp"
 
-#define HEAD_SPIN 4 // Head spin port
+#define HEAD_SPIN 5  // Head spin port
 Servo headspin;
 
 // The VEX Motor Controller 29's do not output linearly.
@@ -39,7 +39,7 @@ void head_spin_init() {
   headspin.attach(HEAD_SPIN);
 }
 
-// Sets the head to spin if the switch isn't enabled 
+// Sets the head to spin if the switch isn't enabled
 void head_spin_set(int input) {
   if (!switch_enabled()) {
     headspin.write(0);
