@@ -3,9 +3,9 @@
 using namespace std;
 
 // Constants
-const double MAX_VELOCITY = 5.0;
-const double MAX_ACCELERATION = 0.5;
-const double MAX_DECELERATION = 1.0;
+const double MAX_VELOCITY = 50.0;
+const double MAX_ACCELERATION = 10.0;
+const double MAX_DECELERATION = 5.0;
 
 // Return sig of input
 int sgn(int input) {
@@ -16,10 +16,16 @@ int sgn(int input) {
   return 0;
 }
 
-int current_position = 0;
+double current_position = 0;
+
+double rad_to_deg(double input) {
+  return input * (180.0 / M_PI);
+}
 
 void profile(int target) {
-  int sign = sgn(target - current_position);  // Am I going fwd or rev?
+  double error = target - current_position;
+
+  int sign = sgn(error);  // Am I going fwd or rev?
 
   // Fwd vs rev constants
   double max_accel = MAX_ACCELERATION * sign;
@@ -27,14 +33,46 @@ void profile(int target) {
   double max_vel = MAX_VELOCITY * sign;
   double increment = max_accel;  // How much to add each iteration
 
-  double error = target - current_position;
-
   double steps_to_accel = (MAX_VELOCITY / MAX_ACCELERATION);
   double steps_to_decel = (MAX_VELOCITY / MAX_DECELERATION);
 
-  double dist_to_accel = (steps_to_accel * MAX_VELOCITY) / 2.0;
-  double dist_to_decel = (steps_to_decel * MAX_VELOCITY) / 2.0;
-  double steps_to_cruise = (fabs(error) - (dist_to_accel + dist_to_decel)) / MAX_VELOCITY;
+  // Area under the velocity/time graph for distance traveled
+  double dist_to_accel = (steps_to_accel * MAX_VELOCITY) / 2.0;  // Max distance to accelerate
+  double dist_to_decel = (steps_to_decel * MAX_VELOCITY) / 2.0;  // Max distance to decelerate
+  double steps_to_cruise = 0.0;
+
+  // Check if the motion is large enough that there is cruise time
+  if (dist_to_accel + dist_to_decel < fabs(error)) {
+    steps_to_cruise = (fabs(error) - (dist_to_accel + dist_to_decel)) / MAX_VELOCITY;  // Distance remaining after accel and decel
+  }
+
+  // If there is no cruise time, we have to figure out when to switch accel to decel
+  else {
+    double area = fabs(error);
+
+    // in radians
+    double accel_angle = atan2(MAX_ACCELERATION, 1.0);  // Angle between accel/floor
+    double decel_angle = atan2(MAX_DECELERATION, 1.0);  // Angle between decel/floor
+    double z = M_PI - (accel_angle + decel_angle);      // Angle between accel/decel
+
+    double accel_hyp = sqrt(((area * 2.0) * sin(decel_angle)) / ((sin(accel_angle)) * (sin(z))));
+    double decel_hyp = sqrt(((area * 2.0) * sin(accel_angle)) / ((sin(decel_angle)) * (sin(z))));
+    double z_dist = sqrt(((area * 2.0) * sin(z)) / ((sin(decel_angle)) * (sin(accel_angle))));
+
+    steps_to_accel = cos(accel_angle) * accel_hyp;
+    steps_to_decel = cos(decel_angle) * decel_hyp;
+
+    double calculated_accel_area = ((sqrt(pow(accel_hyp, 2) - pow(steps_to_accel, 2))) * steps_to_accel) / 2.0;
+    double calculated_decel_area = ((sqrt(pow(decel_hyp, 2) - pow(steps_to_decel, 2))) * steps_to_decel) / 2.0;
+
+    cout << rad_to_deg(accel_angle) << " " << rad_to_deg(decel_angle) << " " << rad_to_deg(z) << "\n";
+    cout << accel_hyp << " " << decel_hyp << "\n";
+    cout << steps_to_accel << " " << steps_to_decel << "    " << z_dist << "\n";
+    cout << calculated_accel_area + calculated_decel_area << "\n\n";
+
+    // cout << z_dist << "\n\n";
+  }
+
   double total_steps = steps_to_accel + steps_to_decel + steps_to_cruise;
   // double steps_to_decel =
   // Calculate total steps, it starts decelerating at total steps - 1 velocity step
@@ -44,8 +82,8 @@ void profile(int target) {
   std::cout << "Accel Rate: " << max_accel << "\n";
   std::cout << "Decel Rate: " << max_decel << "\n";
   std::cout << "Vel Rate: " << max_vel << "\n\n";
-  std::cout << "Steps to Accel: " << steps_to_accel << "\n";
-  std::cout << "Steps to Decel: " << steps_to_decel << "\n";
+  std::cout << "Steps to Accel: " << steps_to_accel << "\tDist to Accel: " << dist_to_accel << "\n";
+  std::cout << "Steps to Decel: " << steps_to_decel << "\tDist to Decel: " << dist_to_decel << "\n";
   std::cout << "Steps to Cruise: " << steps_to_cruise << "\n";
   std::cout << "Total Steps: " << total_steps << "\n\n";
 
@@ -57,7 +95,7 @@ void profile(int target) {
   while (step <= total_steps) {
     // std::cout << increment << "\n";
     // std::cout << current_position << "\n";
-    std::cout << step << "\t" << increment << "\n";
+    std::cout << current_position << "\t" << increment << "\n";
 
     // Increase current position
     current_position += increment;
@@ -84,13 +122,13 @@ void profile(int target) {
   // If target is unattainable by a perfect increment, set the final destination here
   if (current_position != target) {
     current_position = target;
-    std::cout << step << "\t" << increment << "\n";
+    // std::cout << step << "\t" << increment << "\n";
   } else {
-    std::cout << step << "\t" << increment << "\n";
+    // std::cout << step << "\t" << increment << "\n";
   }
 }
 
 int main() {
-  profile(180);
+  profile(55);
   // std::cout << "Hello World" << std::endl;
 }
