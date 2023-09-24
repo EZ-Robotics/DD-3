@@ -1,15 +1,7 @@
 #include <Adafruit_PWMServoDriver.h>
-#include <SoftEasyTransfer.h>
-#include <SoftwareSerial.h>
-#include <Wire.h>
-
-SoftwareSerial mySerial(0, 1);
 
 // Based on
-// https://github.com/madsci1016/Arduino-EasyTransfer/tree/master/SoftEasyTransfer
-
-// create object
-SoftEasyTransfer BtH;
+// https://arduino.stackexchange.com/questions/72138/send-structure-through-serial
 
 struct SEND_DATA_STRUCTURE {
   int16_t eye_y_;
@@ -21,8 +13,7 @@ struct SEND_DATA_STRUCTURE {
 SEND_DATA_STRUCTURE BtH_data;
 
 void easytransfer_init() {
-  mySerial.begin(9600);
-  BtH.begin(details(BtH_data), &mySerial);
+  Serial1.begin(9600);
 }
 
 #define SERVO_FREQ 50  // Analog servos run at ~50 Hz updates
@@ -30,8 +21,6 @@ void easytransfer_init() {
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x41, Wire);
 
 void pwm_init() {
-  Wire.setSCL(19);
-  Wire.setSDA(18);
   pwm.begin();
   pwm.setOscillatorFrequency(27000000);
   pwm.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
@@ -68,22 +57,25 @@ void setup() {
   pwm_init();
 }
 
-void loop() {
-  // check and see if a data packet has come in.
-  if (BtH.receiveData()) {
-    /*
-    Serial.println(BtH_data.eye_y_);
-    Serial.println(BtH_data.eye_x_);
-    Serial.println(BtH_data.eyebrow_left_);
-    Serial.println(BtH_data.eyebrow_right_);
-    Serial.println();
-    */
+bool receive(SEND_DATA_STRUCTURE* table) {
+  return (Serial1.readBytes((char*)table, sizeof(SEND_DATA_STRUCTURE)) == sizeof(SEND_DATA_STRUCTURE));
+}
 
-    eye_y_set(BtH_data.eye_y_);
-    eye_x_set(BtH_data.eye_x_);
-    eyebrow_left_set(BtH_data.eyebrow_left_);
-    eyebrow_right_set(BtH_data.eyebrow_right_);
-  }
+void loop() {
+  receive(&BtH_data);
+
+  Serial.println(BtH_data.eye_y_);
+  Serial.println(BtH_data.eye_x_);
+  Serial.println(BtH_data.eyebrow_left_);
+  Serial.println(BtH_data.eyebrow_right_);
+  Serial.println();
+  /*
+  receive(&BtH_data);
+  eye_y_set(BtH_data.eye_y_);
+  eye_x_set(BtH_data.eye_x_);
+  eyebrow_left_set(BtH_data.eyebrow_left_);
+  eyebrow_right_set(BtH_data.eyebrow_right_);
+  */
 
   delay(10);
 }
