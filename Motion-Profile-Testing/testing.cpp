@@ -4,8 +4,8 @@ using namespace std;
 
 // Constants
 const double MAX_VELOCITY = 50.0;
-const double MAX_ACCELERATION = 10.0;
-const double MAX_DECELERATION = 5.0;
+const double MAX_ACCELERATION = 2.0;
+const double MAX_DECELERATION = 2.0;
 
 // Return sig of input
 int sgn(int input) {
@@ -48,6 +48,7 @@ void profile(int target) {
 
   // If there is no cruise time, we have to figure out when to switch accel to decel
   else {
+    // Area of the velocity/time graph, aka distance we have to go
     double area = fabs(error);
 
     // in radians
@@ -55,27 +56,30 @@ void profile(int target) {
     double decel_angle = atan2(MAX_DECELERATION, 1.0);  // Angle between decel/floor
     double z = M_PI - (accel_angle + decel_angle);      // Angle between accel/decel
 
+    // Solve all angles of the triangle
     double accel_hyp = sqrt(((area * 2.0) * sin(decel_angle)) / ((sin(accel_angle)) * (sin(z))));
     double decel_hyp = sqrt(((area * 2.0) * sin(accel_angle)) / ((sin(decel_angle)) * (sin(z))));
     double z_dist = sqrt(((area * 2.0) * sin(z)) / ((sin(decel_angle)) * (sin(accel_angle))));
 
+    // Find the bottom leg of triangle
     steps_to_accel = cos(accel_angle) * accel_hyp;
     steps_to_decel = cos(decel_angle) * decel_hyp;
 
+    // This is just for double checking above works
+    /*
     double calculated_accel_area = ((sqrt(pow(accel_hyp, 2) - pow(steps_to_accel, 2))) * steps_to_accel) / 2.0;
     double calculated_decel_area = ((sqrt(pow(decel_hyp, 2) - pow(steps_to_decel, 2))) * steps_to_decel) / 2.0;
-
     cout << rad_to_deg(accel_angle) << " " << rad_to_deg(decel_angle) << " " << rad_to_deg(z) << "\n";
     cout << accel_hyp << " " << decel_hyp << "\n";
     cout << steps_to_accel << " " << steps_to_decel << "    " << z_dist << "\n";
     cout << calculated_accel_area + calculated_decel_area << "\n\n";
-
-    // cout << z_dist << "\n\n";
+    */
   }
 
+  // Total steps needed to take
   double total_steps = steps_to_accel + steps_to_decel + steps_to_cruise;
-  // double steps_to_decel =
-  // Calculate total steps, it starts decelerating at total steps - 1 velocity step
+
+  double decel_b = 0 - (-max_decel * total_steps);  // y intercept for deceleration graph
 
   std::cout << "Current: " << current_position << "\n";
   std::cout << "Target: " << target << "\n\n";
@@ -95,24 +99,24 @@ void profile(int target) {
   while (step <= total_steps) {
     // std::cout << increment << "\n";
     // std::cout << current_position << "\n";
-    std::cout << current_position << "\t" << increment << "\n";
+    std::cout << step << "\t" << increment << "\n";
 
     // Increase current position
     current_position += increment;
+    current_position = fabs(current_position) > fabs(target) ? target : current_position;
 
-    // Change acceleration rates
+    // Decelerating
     if (step >= steps_to_accel + steps_to_cruise) {
-      increment -= max_decel;                              // Decrease velocity over time (negative acceleration!)
-      increment = sgn(increment) != sign ? 0 : increment;  // Make sure this can never go below 0
-    } else if (step >= steps_to_accel) {
-      increment = max_vel;  // Keep velocity constant, we're at max now
-    } else {
-      increment += max_accel;                                             // Increase velocity over time (acceleration!)
-      increment = fabs(increment) > fabs(max_vel) ? max_vel : increment;  // Make sure this can never surpass max_vel
+      increment = (-max_decel * step) + decel_b;
     }
-
-    // Figure out how much distance is left to go
-    error = target - current_position;
+    // At max vel
+    else if (step >= steps_to_accel) {
+      increment = max_vel;  // Keep velocity constant, we're at max now
+    }
+    // Accelerating
+    else {
+      increment = max_accel * step;
+    }
 
     // Keep track of how many times this has looped
     step++;
@@ -122,13 +126,13 @@ void profile(int target) {
   // If target is unattainable by a perfect increment, set the final destination here
   if (current_position != target) {
     current_position = target;
-    // std::cout << step << "\t" << increment << "\n";
+    std::cout << step << "\t" << increment << "\n";
   } else {
-    // std::cout << step << "\t" << increment << "\n";
+    std::cout << step << "\t" << increment << "\n";
   }
 }
 
 int main() {
-  profile(55);
+  profile(5000);
   // std::cout << "Hello World" << std::endl;
 }
