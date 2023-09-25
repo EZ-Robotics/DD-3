@@ -7,7 +7,7 @@ const double MAX_VELOCITY = 5.0;
 const double MAX_ACCELERATION = 1.0;
 const double MAX_DECELERATION = 0.5;
 
-// Return sig of input
+// Return sign of input
 int sgn(int input) {
   if (input > 0)
     return 1;
@@ -21,14 +21,14 @@ double rad_to_deg(double input) {
   return input * (180.0 / M_PI);
 }
 
-double current_position = 180;
+double current_position = 0;
 
 void profile(int target) {
   double error = target - current_position;
 
-  int sign = sgn(error);  // Am I going fwd or rev?
+  int sign = sgn(error);  // Am I going fwd(+) or rev(-)?
 
-  // Fwd vs rev constants
+  // Modify constants to be fwd or rev
   double max_accel = MAX_ACCELERATION * sign;
   double max_decel = MAX_DECELERATION * sign;
   double max_vel = MAX_VELOCITY * sign;
@@ -57,10 +57,15 @@ void profile(int target) {
     double decel_angle = atan2(MAX_DECELERATION, 1.0);  // Angle between decel/floor
     double z = M_PI - (accel_angle + decel_angle);      // Angle between accel/decel
 
+    double a2 = area * 2.0;
+    double sin_decel = sin(decel_angle);
+    double sin_accel = sin(accel_angle);
+    double sin_z = sin(z);
+
     // Solve all angles of the triangle
-    double accel_hyp = sqrt(((area * 2.0) * sin(decel_angle)) / ((sin(accel_angle)) * (sin(z))));
-    double decel_hyp = sqrt(((area * 2.0) * sin(accel_angle)) / ((sin(decel_angle)) * (sin(z))));
-    double z_dist = sqrt(((area * 2.0) * sin(z)) / ((sin(decel_angle)) * (sin(accel_angle))));
+    double accel_hyp = sqrt((a2 * sin_decel) / ((sin_accel) * (sin_z)));
+    double decel_hyp = sqrt((a2 * sin_accel) / ((sin_decel) * (sin_z)));
+    double z_dist = sqrt((a2 * sin_z) / ((sin_decel) * (sin_accel)));
 
     // Find the bottom leg of triangle
     steps_to_accel = cos(accel_angle) * accel_hyp;
@@ -80,10 +85,10 @@ void profile(int target) {
   // Total steps needed to take
   double total_steps = steps_to_accel + steps_to_decel + steps_to_cruise;
 
-  double decel_b = 0 - (-max_decel * total_steps);  // y intercept for deceleration graph
+  double decel_b = 0 - (-max_decel * total_steps);  // y=mx+b, solve for b, final point of velocity/time graph used for x,y
 
-  std::cout << "Current: " << current_position << "\n";
-  std::cout << "Target: " << target << "\n\n";
+  std::cout << "Target: " << target << "\n";
+  std::cout << "Current: " << current_position << "\n\n";
   std::cout << "Accel Rate: " << max_accel << "\n";
   std::cout << "Decel Rate: " << max_decel << "\n";
   std::cout << "Vel Rate: " << max_vel << "\n\n";
@@ -99,8 +104,7 @@ void profile(int target) {
   int step = 1;
   std::cout << "0\t0\n";
 
-  // Run this while current position is smaller than target
-  // while (sgn(error) == sign) {
+  // Run this for calculated amount of time
   while (step <= total_steps) {
     error = target - current_position;
     // std::cout << increment << "\n";
@@ -140,5 +144,5 @@ void profile(int target) {
 }
 
 int main() {
-  profile(0);
+  profile(180);
 }
