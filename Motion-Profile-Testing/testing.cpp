@@ -3,9 +3,9 @@
 using namespace std;
 
 // Constants
-const double MAX_VELOCITY = 50.0;
-const double MAX_ACCELERATION = 2.0;
-const double MAX_DECELERATION = 2.0;
+const double MAX_VELOCITY = 5.0;
+const double MAX_ACCELERATION = 1.0;
+const double MAX_DECELERATION = 0.5;
 
 // Return sig of input
 int sgn(int input) {
@@ -16,11 +16,12 @@ int sgn(int input) {
   return 0;
 }
 
-double current_position = 0;
-
+// Convert rad to deg
 double rad_to_deg(double input) {
   return input * (180.0 / M_PI);
 }
+
+double current_position = 180;
 
 void profile(int target) {
   double error = target - current_position;
@@ -86,10 +87,14 @@ void profile(int target) {
   std::cout << "Accel Rate: " << max_accel << "\n";
   std::cout << "Decel Rate: " << max_decel << "\n";
   std::cout << "Vel Rate: " << max_vel << "\n\n";
-  std::cout << "Steps to Accel: " << steps_to_accel << "\tDist to Accel: " << dist_to_accel << "\n";
-  std::cout << "Steps to Decel: " << steps_to_decel << "\tDist to Decel: " << dist_to_decel << "\n";
+  std::cout << "Steps to Accel: " << steps_to_accel << "\n";
+  std::cout << "Steps to Decel: " << steps_to_decel << "\n";
   std::cout << "Steps to Cruise: " << steps_to_cruise << "\n";
   std::cout << "Total Steps: " << total_steps << "\n\n";
+  std::cout << "Dist to Accel: " << dist_to_accel << "\n";
+  std::cout << "Dist to Decel: " << dist_to_decel << "\n";
+  std::cout << "Dist to Cruise: " << (fabs(error) - (dist_to_accel + dist_to_decel)) << "\n";
+  std::cout << "Total Dist: " << (fabs(error) - (dist_to_accel + dist_to_decel)) + dist_to_accel + dist_to_decel << "\n\n";
 
   int step = 1;
   std::cout << "0\t0\n";
@@ -97,13 +102,9 @@ void profile(int target) {
   // Run this while current position is smaller than target
   // while (sgn(error) == sign) {
   while (step <= total_steps) {
+    error = target - current_position;
     // std::cout << increment << "\n";
     // std::cout << current_position << "\n";
-    std::cout << step << "\t" << increment << "\n";
-
-    // Increase current position
-    current_position += increment;
-    current_position = fabs(current_position) > fabs(target) ? target : current_position;
 
     // Decelerating
     if (step >= steps_to_accel + steps_to_cruise) {
@@ -117,6 +118,12 @@ void profile(int target) {
     else {
       increment = max_accel * step;
     }
+    increment = fabs(increment) > fabs(max_vel) ? max_vel : increment;  // Make sure we never accelerate too fast
+
+    // Increase current position
+    current_position += increment;
+    current_position = sgn(error) != sign ? target : current_position;  // Make sure target position is never too far
+    std::cout << current_position << "\t" << increment << "\n";
 
     // Keep track of how many times this has looped
     step++;
@@ -126,13 +133,12 @@ void profile(int target) {
   // If target is unattainable by a perfect increment, set the final destination here
   if (current_position != target) {
     current_position = target;
-    std::cout << step << "\t" << increment << "\n";
+    std::cout << current_position << "\t" << increment << "\n";
   } else {
-    std::cout << step << "\t" << increment << "\n";
+    std::cout << current_position << "\t" << increment << "\n";
   }
 }
 
 int main() {
-  profile(5000);
-  // std::cout << "Hello World" << std::endl;
+  profile(0);
 }
