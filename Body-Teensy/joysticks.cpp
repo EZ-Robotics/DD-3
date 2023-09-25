@@ -1,6 +1,11 @@
-#include <Wire.h>
-
 #include "joysticks.hpp"
+#include "sbus.h"  // Library
+
+// Sbus rx on uart
+bfs::SbusRx sbus_rx(&Serial1);
+
+// Input data from sbus
+bfs::SbusData data;
 
 // Scalers for joystick curve
 #define FWD_SCALE 5.0
@@ -14,15 +19,19 @@ int joystick_threshold(int input) {
 
 // Initialize receiver
 void joystick_init() {
-  pinMode(CH1, INPUT);
-  pinMode(CH2, INPUT);
-  pinMode(CH3, INPUT);
-  pinMode(CH4, INPUT);
+  sbus_rx.Begin();  // Init uart
+}
+
+void joystick_runtime() {
+  if (sbus_rx.Read()) {
+    /* Grab the received data */
+    data = sbus_rx.data();
+  }
 }
 
 // "Raw" joystick value, for use in this file only
 int joystick_channel_raw(int channel) {
-  return map(pulseIn(channel, HIGH, 30000), 990, 2014, -127, 127);
+  return map(data.ch[channel], 172, 1811, -127, 127);
 }
 
 // Forward curve, clipping output with threshold, based on red curve here https://www.desmos.com/calculator/rcfjjg83zx
