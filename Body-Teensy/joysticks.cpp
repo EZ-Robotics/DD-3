@@ -48,5 +48,9 @@ double joystick_curve_turn(double x) {
 
 // Normal output, clipping output with threshold
 int joystick_channel(int channel) {
+  // TODO: 
+  // Now that SBUS is used, this function needs to change what it outputs depending on what channel it is reading.
+  // For buttons, this should output 0,1,2,etc instead of -127 to 127.  Raw is ok being -127 to 127.
+  // Slider should output 0 - 255 probably.  etc.
   return joystick_threshold(joystick_channel_raw(channel));
 }
