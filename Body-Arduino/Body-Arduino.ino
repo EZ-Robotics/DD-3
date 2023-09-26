@@ -24,13 +24,13 @@ void loop() {
   joystick_runtime();
   head_tilt_runtime();
   head_spin_runtime();
-  // drive_runtime();
+  drive_runtime();
 
-  for (int i = 0; i < 8; i++) {
-    Serial.print(joystick_channel(i));
-    Serial.print("\t");
-  }
-  Serial.print("\n");
+  // for (int i = 0; i < 8; i++) {
+  //  Serial.print(joystick_channel(i));
+  //   Serial.print("\t");
+  // }
+  // Serial.print("\n");
   // Serial.println(switch_enabled());
   /*
   for (int i = -127; i < 127; i++) {
