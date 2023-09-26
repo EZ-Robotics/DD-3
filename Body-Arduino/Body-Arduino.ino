@@ -22,8 +22,8 @@ void setup() {
 }
 void loop() {
   joystick_runtime();
-   head_tilt_runtime();
-   head_spin_runtime();
+  head_tilt_runtime();
+  head_spin_runtime();
   // drive_runtime();
 
   for (int i = 0; i < 8; i++) {
