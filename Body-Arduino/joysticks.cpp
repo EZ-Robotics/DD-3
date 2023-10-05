@@ -7,10 +7,6 @@ bfs::SbusRx sbus_rx(&Serial1);
 // Input data from sbus
 bfs::SbusData data;
 
-// Scalers for joystick curve
-#define FWD_SCALE 5.0
-#define TURN_SCALE 8.0
-
 // Incase joysticks don't perfectly return to 0, remove the first few values of joystick
 #define THRESHOLD 2
 int joystick_threshold(int input) {
@@ -35,14 +31,14 @@ int joystick_channel_raw(int channel) {
 }
 
 // Forward curve, clipping output with threshold, based on red curve here https://www.desmos.com/calculator/rcfjjg83zx
-double joystick_curve_fwd(double x) {
-  double curve = (powf(2.718, -(FWD_SCALE / 10)) + powf(2.718, (fabs(x) - 127) / 10) * (1 - powf(2.718, -(FWD_SCALE / 10)))) * x;
+double joystick_curve_fwd(double x, double t) {
+  double curve = (powf(2.718, -(t / 10)) + powf(2.718, (fabs(x) - 127) / 10) * (1 - powf(2.718, -(t / 10)))) * x;
   return joystick_threshold(curve);
 }
 
 // Turn curve, clipping output with threshold, based on red curve here https://www.desmos.com/calculator/rcfjjg83zx
-double joystick_curve_turn(double x) {
-  double curve = (powf(2.718, -(TURN_SCALE / 10)) + powf(2.718, (fabs(x) - 127) / 10) * (1 - powf(2.718, -(TURN_SCALE / 10)))) * x;
+double joystick_curve_turn(double x, double t) {
+  double curve = (powf(2.718, -(t / 10)) + powf(2.718, (fabs(x) - 127) / 10) * (1 - powf(2.718, -(t / 10)))) * x;
   return joystick_threshold(curve);
 }
 
