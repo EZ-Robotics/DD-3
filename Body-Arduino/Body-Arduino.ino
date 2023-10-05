@@ -26,6 +26,17 @@ void loop() {
   head_spin_runtime();
   drive_runtime();
 
+  /*
+  Serial.print(joystick_channel(CH5));
+  Serial.print("\t");
+  Serial.print(joystick_channel(CH6));
+  Serial.print("\t");
+  Serial.print(joystick_channel(CH7));
+  Serial.print("\t");
+  Serial.print(joystick_channel(CH8));
+  Serial.print("\n");
+  */
+
   // for (int i = 0; i < 8; i++) {
   //  Serial.print(joystick_channel(i));
   //   Serial.print("\t");

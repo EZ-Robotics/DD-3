@@ -5,10 +5,10 @@
 #define CH2 1  // Right X
 #define CH3 2  // Left Y
 #define CH4 3  // Left X
-#define CH5 4  // Left Slider
-#define CH6 5  // Right Slider
-#define CH7 6  // Left 3 switch
-#define CH8 7  // Right 3 switch
+#define CH5 4  // Right Slider
+#define CH6 5  // Left Slider
+#define CH7 6  // Right 3 switch
+#define CH8 7  // Left 3 switch
 #define CH9 8
 #define CH10 9
 #define CH11 10
@@ -17,6 +17,11 @@
 #define CH14 13
 #define CH15 14
 #define CH16 15
+
+enum _tri_switch { DOWN,
+                   MIDDLE,
+                   UP
+};
 
 void joystick_init();
 
