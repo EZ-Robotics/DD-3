@@ -11,11 +11,16 @@
 Servo L_MOTOR;  // create servo object to control the ESC
 Servo R_MOTOR;  // create servo object to control the ESC
 
+// One function to check joystick kill switch and body kill switch
+bool drive_switch_enabled() {
+  return !switch_enabled() || joystick_channel(CH9) == UP;
+}
+
 // Set the drive motors if the switch is enabled
 // Account for slight speed difference between left and right
 void drive_set_raw(double l, double r) {
   // If switch is disabled...
-  if (!switch_enabled() || joystick_channel(CH9) == UP) {
+  if (drive_switch_enabled()) {
     l = 0;
     r = 0;
     l = l - 5;
@@ -43,7 +48,7 @@ double l_target = 0.0, r_target = 0.0;
 double l_current = 0.0, r_current = 0.0;
 const double MAX = 2;
 void drive_set(double l, double r) {
-  if (!switch_enabled()) {
+  if (drive_switch_enabled()) {
     l_target = r_target = r_current = l_current = 0.0;
     drive_set_raw(l_target, r_target);
     return;
