@@ -50,13 +50,24 @@ double joystick_curve_turn(double x, double t) {
 }
 
 // Turn -127, 0, 127 into 0, 1, 2 for switches
-_tri_switch joystick_tri_switch_raw(int channel) {
+_switch joystick_tri_switch_raw(int channel) {
   int check = joystick_threshold(joystick_channel_raw(channel));
   int thresh = 127 - THRESHOLD;
   if (check <= -thresh)
     return DOWN;
   else if (check == 0)
     return MIDDLE;
+  else if (check >= thresh)
+    return UP;
+  return DOWN;
+}
+
+// Turn -127, 127 into 0, 1 for switches
+_switch joystick_dual_switch_raw(int channel) {
+  int check = joystick_threshold(joystick_channel_raw(channel));
+  int thresh = 127 - THRESHOLD;
+  if (check <= -thresh)
+    return DOWN;
   else if (check >= thresh)
     return UP;
   return DOWN;
@@ -81,6 +92,11 @@ int joystick_channel(int channel) {
     // Tri Switches
     case CH7 ... CH8:
       output = joystick_tri_switch_raw(channel);
+      break;
+
+    // Dual Switches
+    case CH9 ... CH10:
+      output = joystick_dual_switch_raw(channel);
       break;
 
     default:

@@ -11,17 +11,11 @@
 Servo L_MOTOR;  // create servo object to control the ESC
 Servo R_MOTOR;  // create servo object to control the ESC
 
-// Initialize the motors with the servo library
-void drive_init() {
-  L_MOTOR.attach(L_MOTOR_CH, 1000, 2000);  // (pin, min pulse width, max pulse width in microseconds)
-  R_MOTOR.attach(R_MOTOR_CH, 1000, 2000);  // (pin, min pulse width, max pulse width in microseconds)
-}
-
 // Set the drive motors if the switch is enabled
 // Account for slight speed difference between left and right
 void drive_set_raw(double l, double r) {
   // If switch is disabled...
-  if (!switch_enabled()) {
+  if (!switch_enabled() || joystick_channel(CH9) == UP) {
     l = 0;
     r = 0;
     l = l - 5;
@@ -35,6 +29,13 @@ void drive_set_raw(double l, double r) {
   r = r * 1.2;
   L_MOTOR.write(map(l, -127, 127, 0, 180));  // Send the signal to the ESC
   R_MOTOR.write(map(r, -127, 127, 0, 180));  // Send the signal to the ESC
+}
+
+// Initialize the motors with the servo library
+void drive_init() {
+  L_MOTOR.attach(L_MOTOR_CH, 1000, 2000);  // (pin, min pulse width, max pulse width in microseconds)
+  R_MOTOR.attach(R_MOTOR_CH, 1000, 2000);  // (pin, min pulse width, max pulse width in microseconds)
+  drive_set_raw(0, 0);
 }
 
 // Slew the drive motors to avoid changes in motion that are too large
@@ -98,35 +99,27 @@ void drive_runtime() {
   else {
     max_speed = 127.0;
     curve_fwd = 5.0;
-    curve_turn = 8.0;
+    curve_turn = 5.0;
   }
 
-  double scale = max_speed / 127.0;
-  double forward = joystick_curve_fwd(joystick_channel(CH3), curve_fwd) * scale;
-  double curve = joystick_curve_turn(joystick_channel(CH4), curve_turn) * scale;
+  // Curvature Drive from
+  // https://github.com/OkapiLib/OkapiLib/blob/54995fd390aaf4d4949a516a76580c50b394912f/src/api/chassis/model/skidSteerModel.cpp#L140-L169
+  double scale = max_speed;
+  double forward = (joystick_curve_fwd(joystick_channel(CH3), curve_fwd)) / 127.0;
+  double curve = (joystick_curve_turn(joystick_channel(CH4), curve_turn)) / 127.0;
 
-  /*
-  double left_speed = forward + std::abs(forward) * curvature;
-  double right_speed = forward - std::abs(forward) * curvature;
-  double fastest_side = std::max(left_speed, right_speed);
+  double left_speed = forward + fabs(forward) * curve;
+  double right_speed = forward - fabs(forward) * curve;
 
   // normalizes output
-  double max = fmax(fabs(left_speed), fabs(right_speed));
-  double min = fmin(fabs(left_speed), fabs(right_speed));
-  if (max > scale * 127.0) {
-    if (fabs(left_speed) > fabs(r_target)) {
-      left_speed = MAX;
-      right_speed = min / max;
-    } else if (fabs(left_speed) < fabs(right_speed)) {
-      left_speed = min / max;
-      right_speed = MAX;
-    }
+  double faster_side = fmax(fabs(left_speed), fabs(right_speed));
+  if (faster_side > 1.0) {
+    left_speed /= faster_side;
+    right_speed /= faster_side;
   }
-  */
 
-  double ch3 = joystick_curve_fwd(joystick_channel(CH3), curve_fwd) * scale;
-  double ch4 = joystick_curve_turn(joystick_channel(CH4), curve_turn) * scale;
-  int left = ch3 + ch4;
-  int right = ch3 - ch4;
-  drive_set(left, right);
+  left_speed = left_speed * scale;
+  right_speed = right_speed * scale;
+
+  drive_set(left_speed, right_speed);
 }
