@@ -26,6 +26,8 @@
 #define LEFT_SLIDER CH6
 #define RIGHT_TRI_SWITCH CH7
 #define LEFT_TRI_SWTICH CH8
+#define RIGHT_DUAL_SWTICH CH9
+#define LEFT_DUAL_SWTICH CH10
 
 enum _switch { DOWN,
                MIDDLE,

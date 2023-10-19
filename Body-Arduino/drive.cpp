@@ -13,7 +13,9 @@ Servo R_MOTOR;  // create servo object to control the ESC
 
 // One function to check joystick kill switch and body kill switch
 bool drive_switch_enabled() {
-  return !switch_enabled() || joystick_channel(CH9) == UP;
+  if (!switch_enabled() || joystick_channel(LEFT_DUAL_SWTICH) == UP)
+    return true;
+  return false;
 }
 
 // Set the drive motors if the switch is enabled
@@ -55,14 +57,15 @@ void drive_set(double l, double r) {
   }
   l_target = l;
   r_target = r;
+
   double max = fmax(fabs(l_target), fabs(r_target));
   double min = fmin(fabs(l_target), fabs(r_target));
   double l_add = MAX, r_add = MAX;
   if (fabs(l_target) > fabs(r_target)) {
     l_add = MAX;
-    r_add = min / max;
+    r_add = MAX * (min / max);
   } else if (fabs(l_target) < fabs(r_target)) {
-    l_add = min / max;
+    l_add = MAX * (min / max);
     r_add = MAX;
   }
 
@@ -96,7 +99,7 @@ void drive_runtime() {
   // Middle Speed
   else if (speed_selector == 1) {
     max_speed = 80.0;
-    curve_fwd = 1.0;
+    curve_fwd = 1.5;
     curve_turn = 1.0;
   }
 
@@ -110,8 +113,8 @@ void drive_runtime() {
   // Curvature Drive from
   // https://github.com/OkapiLib/OkapiLib/blob/54995fd390aaf4d4949a516a76580c50b394912f/src/api/chassis/model/skidSteerModel.cpp#L140-L169
   double scale = max_speed;
-  double forward = (joystick_curve_fwd(joystick_channel(CH3), curve_fwd)) / 127.0;
-  double curve = (joystick_curve_turn(joystick_channel(CH4), curve_turn)) / 127.0;
+  double forward = (joystick_curve_fwd(joystick_channel(LEFT_Y), curve_fwd)) / 127.0;
+  double curve = (joystick_curve_turn(joystick_channel(LEFT_X), curve_turn)) / 127.0;
 
   double left_speed = forward + fabs(forward) * curve;
   double right_speed = forward - fabs(forward) * curve;
