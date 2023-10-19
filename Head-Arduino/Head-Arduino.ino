@@ -1,7 +1,12 @@
 #include <Adafruit_PWMServoDriver.h>
+#include <SoftwareSerial.h>
 
 // Based on
 // https://arduino.stackexchange.com/questions/72138/send-structure-through-serial
+// and
+// https://docs.arduino.cc/tutorials/communication/SoftwareSerialExample
+
+SoftwareSerial mySerial(2, 3); // RX, TX
 
 struct SEND_DATA_STRUCTURE {
   int16_t eye_y_;
@@ -13,7 +18,7 @@ struct SEND_DATA_STRUCTURE {
 SEND_DATA_STRUCTURE BtH_data;
 
 void easytransfer_init() {
-  Serial1.begin(9600);
+  mySerial.begin(9600);
 }
 
 #define SERVO_FREQ 50  // Analog servos run at ~50 Hz updates
@@ -58,7 +63,7 @@ void setup() {
 }
 
 bool receive(SEND_DATA_STRUCTURE* table) {
-  return (Serial1.readBytes((char*)table, sizeof(SEND_DATA_STRUCTURE)) == sizeof(SEND_DATA_STRUCTURE));
+  return (mySerial.readBytes((char*)table, sizeof(SEND_DATA_STRUCTURE)) == sizeof(SEND_DATA_STRUCTURE));
 }
 
 void loop() {

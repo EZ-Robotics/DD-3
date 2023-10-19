@@ -5,10 +5,10 @@
 #define CH2 1  // Right X
 #define CH3 2  // Left Y
 #define CH4 3  // Left X
-#define CH5 4  // Left Slider
-#define CH6 5  // Right Slider
-#define CH7 6  // Left 3 switch
-#define CH8 7  // Right 3 switch
+#define CH5 4  // Right Slider
+#define CH6 5  // Left Slider
+#define CH7 6  // Right 3 switch
+#define CH8 7  // Left 3 switch
 #define CH9 8
 #define CH10 9
 #define CH11 10
@@ -18,10 +18,24 @@
 #define CH15 14
 #define CH16 15
 
+#define RIGHT_Y CH1
+#define RIGHT_X CH2
+#define LEFT_Y CH3
+#define LEFT_X CH4
+#define RIGHT_SLIDER CH5
+#define LEFT_SLIDER CH6
+#define RIGHT_TRI_SWITCH CH7
+#define LEFT_TRI_SWTICH CH8
+
+enum _tri_switch { DOWN,
+                   MIDDLE,
+                   UP
+};
+
 void joystick_init();
 
 void joystick_runtime();
 
-double joystick_curve_fwd(double x);
-double joystick_curve_turn(double x);
+double joystick_curve_fwd(double x, double t);
+double joystick_curve_turn(double x, double t);
 int joystick_channel(int channel);

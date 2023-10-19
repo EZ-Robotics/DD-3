@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SoftEasyTransfer.h>
+#include <Arduino.h>
 
 struct SEND_DATA_STRUCTURE {
   // put your variable definitions here for the data you want to send
@@ -12,8 +12,6 @@ struct SEND_DATA_STRUCTURE {
 };
 // give a name to the group of data
 extern SEND_DATA_STRUCTURE BtH_data;
-
-extern SoftEasyTransfer BtH;
 
 void body_to_head_init();
 void body_to_head_send();
