@@ -15,7 +15,11 @@ int joystick_threshold(int input) {
 
 // Initialize receiver
 void joystick_init() {
+  Serial1.begin(9600);
   sbus_rx.Begin();  // Init uart
+  for (int i = 0; i < 16; i++) {
+    data.ch[i] = 0;
+  }
 }
 
 void joystick_runtime() {
@@ -27,7 +31,10 @@ void joystick_runtime() {
 
 // "Raw" joystick value, for use in this file only
 int joystick_channel_raw(int channel) {
-  return map(data.ch[channel], 172, 1811, -127, 127);
+  int output = map(data.ch[channel], 172, 1811, -127, 127);
+  if (output < -127 || output > 127)
+    output = 0;
+  return output;
 }
 
 // Forward curve, clipping output with threshold, based on red curve here https://www.desmos.com/calculator/rcfjjg83zx

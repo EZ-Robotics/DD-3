@@ -21,42 +21,23 @@ void setup() {
   delay(10);
 }
 void loop() {
+  switch_runtime();
   joystick_runtime();
   head_tilt_runtime();
   head_spin_runtime();
   drive_runtime();
 
   /*
-  Serial.print(joystick_channel(CH5));
+  Serial.print(switch_enabled());
   Serial.print("\t");
-  Serial.print(joystick_channel(CH6));
+  Serial.print(joystick_channel(CH1));
   Serial.print("\t");
-  Serial.print(joystick_channel(CH7));
+  Serial.print(joystick_channel(CH2));
   Serial.print("\t");
-  Serial.print(joystick_channel(CH8));
+  Serial.print(joystick_channel(CH3));
+  Serial.print("\t");
+  Serial.print(joystick_channel(CH4));
   Serial.print("\n");
-  */
-
-  // for (int i = 0; i < 8; i++) {
-  //  Serial.print(joystick_channel(i));
-  //   Serial.print("\t");
-  // }
-  // Serial.print("\n");
-  // Serial.println(switch_enabled());
-  /*
-  for (int i = -127; i < 127; i++) {
-    head_tilt_set(i);
-    drive_set(i, i);
-    head_spin_set(i);
-    delay(5);
-  }
-
-  for (int i = 127; i > -127; i--) {
-    head_tilt_set(i);
-    drive_set(i, i);
-    head_spin_set(i);
-    delay(5);
-  }
   */
 
   // eye_runtime();

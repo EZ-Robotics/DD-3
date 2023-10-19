@@ -4,7 +4,7 @@
 #include "joysticks.hpp"
 #include "switch.hpp"
 
-#define HEAD_SPIN 5  // Head spin port
+#define HEAD_SPIN 12  // Head spin port
 Servo headspin;
 
 // The VEX Motor Controller 29's do not output linearly.

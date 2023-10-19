@@ -102,6 +102,28 @@ void drive_runtime() {
   }
 
   double scale = max_speed / 127.0;
+  double forward = joystick_curve_fwd(joystick_channel(CH3), curve_fwd) * scale;
+  double curve = joystick_curve_turn(joystick_channel(CH4), curve_turn) * scale;
+
+  /*
+  double left_speed = forward + std::abs(forward) * curvature;
+  double right_speed = forward - std::abs(forward) * curvature;
+  double fastest_side = std::max(left_speed, right_speed);
+
+  // normalizes output
+  double max = fmax(fabs(left_speed), fabs(right_speed));
+  double min = fmin(fabs(left_speed), fabs(right_speed));
+  if (max > scale * 127.0) {
+    if (fabs(left_speed) > fabs(r_target)) {
+      left_speed = MAX;
+      right_speed = min / max;
+    } else if (fabs(left_speed) < fabs(right_speed)) {
+      left_speed = min / max;
+      right_speed = MAX;
+    }
+  }
+  */
+
   double ch3 = joystick_curve_fwd(joystick_channel(CH3), curve_fwd) * scale;
   double ch4 = joystick_curve_turn(joystick_channel(CH4), curve_turn) * scale;
   int left = ch3 + ch4;
