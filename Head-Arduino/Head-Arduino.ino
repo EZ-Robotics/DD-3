@@ -6,7 +6,7 @@
 // and
 // https://docs.arduino.cc/tutorials/communication/SoftwareSerialExample
 
-SoftwareSerial mySerial(2, 3); // RX, TX
+SoftwareSerial mySerial(2, 3);  // RX, TX
 
 struct SEND_DATA_STRUCTURE {
   int16_t eye_y_;
@@ -18,7 +18,7 @@ struct SEND_DATA_STRUCTURE {
 SEND_DATA_STRUCTURE BtH_data;
 
 void easytransfer_init() {
-  mySerial.begin(9600);
+  Serial1.begin(9600);
 }
 
 #define SERVO_FREQ 50  // Analog servos run at ~50 Hz updates
@@ -56,23 +56,26 @@ void eyebrow_left_set(int input) {
 }
 
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(9600);
   easytransfer_init();
   pwm_init();
 }
 
 bool receive(SEND_DATA_STRUCTURE* table) {
-  return (mySerial.readBytes((char*)table, sizeof(SEND_DATA_STRUCTURE)) == sizeof(SEND_DATA_STRUCTURE));
+  return (Serial1.readBytes((char*)table, sizeof(SEND_DATA_STRUCTURE)) == sizeof(SEND_DATA_STRUCTURE));
 }
 
 void loop() {
   receive(&BtH_data);
 
-  Serial.println(BtH_data.eye_y_);
-  Serial.println(BtH_data.eye_x_);
-  Serial.println(BtH_data.eyebrow_left_);
-  Serial.println(BtH_data.eyebrow_right_);
+  Serial.print(BtH_data.eye_y_);
+  Serial.print("\t");
+  Serial.print(BtH_data.eye_x_);
+  Serial.print("\t");
+  Serial.print(BtH_data.eyebrow_left_);
+  Serial.print("\t");
+  Serial.print(BtH_data.eyebrow_right_);
+  Serial.print("\t");
   Serial.println();
   /*
   receive(&BtH_data);

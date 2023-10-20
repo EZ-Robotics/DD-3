@@ -25,12 +25,14 @@ bool switch_enabled() {
   return switch_output;
 }
 
+// Raw controller switch
 bool controller_switch_raw() {
   if (joystick_channel(LEFT_DUAL_SWTICH) == DOWN)
     return true;
   return false;
 }
 
+// Is controller switch enabled?
 bool controller_switch_enabled() {
   return controller_switch_output;
 }

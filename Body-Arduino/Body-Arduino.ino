@@ -15,7 +15,7 @@ void setup() {
   head_tilt_init();
   drive_init();
   joystick_init();
-  // body_to_head_init();
+  body_to_head_init();
   Serial.begin(9600);
 
   delay(10);
