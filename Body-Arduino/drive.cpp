@@ -13,7 +13,7 @@ Servo R_MOTOR;  // create servo object to control the ESC
 
 // One function to check joystick kill switch and body kill switch
 bool drive_switch_enabled() {
-  if (!switch_enabled() || joystick_channel(LEFT_DUAL_SWTICH) == UP)
+  if (!switch_enabled() || !controller_switch_enabled())
     return true;
   return false;
 }

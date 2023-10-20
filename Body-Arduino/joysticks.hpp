@@ -29,9 +29,9 @@
 #define RIGHT_DUAL_SWTICH CH9
 #define LEFT_DUAL_SWTICH CH10
 
-enum _switch { DOWN,
-               MIDDLE,
-               UP
+enum _switch { DOWN = 2,
+               MIDDLE = 1,
+               UP = 0
 };
 
 void joystick_init();

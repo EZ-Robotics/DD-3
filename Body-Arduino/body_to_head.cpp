@@ -5,10 +5,12 @@
 
 // Based on
 // https://arduino.stackexchange.com/questions/72138/send-structure-through-serial
+// and
+// https://docs.arduino.cc/learn/built-in-libraries/software-serial
 
 SEND_DATA_STRUCTURE BtH_data;
 
-SoftwareSerial mySerial(2, 3);  // RX, TX
+SoftwareSerial mySerial(3, 2);  // RX, TX
 
 int size_data = sizeof(struct SEND_DATA_STRUCTURE);
 void send(const SEND_DATA_STRUCTURE* table) {
