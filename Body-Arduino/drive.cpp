@@ -90,14 +90,14 @@ void drive_runtime() {
   double curve_turn = 1.0;
 
   // Slowest Speed
-  if (speed_selector == 0) {
+  if (speed_selector == DOWN) {
     max_speed = 55;
     curve_fwd = 1.0;
     curve_turn = 1.0;
   }
 
   // Middle Speed
-  else if (speed_selector == 1) {
+  else if (speed_selector == MIDDLE) {
     max_speed = 80.0;
     curve_fwd = 1.5;
     curve_turn = 1.0;
