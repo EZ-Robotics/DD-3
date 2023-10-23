@@ -11,13 +11,6 @@
 Servo L_MOTOR;  // create servo object to control the ESC
 Servo R_MOTOR;  // create servo object to control the ESC
 
-// One function to check joystick kill switch and body kill switch
-bool drive_switch_enabled() {
-  if (!switch_enabled() || !controller_switch_enabled())
-    return true;
-  return false;
-}
-
 // Set the drive motors if the switch is enabled
 // Account for slight speed difference between left and right
 void drive_set_raw(double l, double r) {
