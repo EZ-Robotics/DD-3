@@ -79,32 +79,38 @@ void switch_runtime() {
 
   // Disable drive if the controller is set down for a certain amount of time
   if (controller_switch_output) {
+    // Current values
     int cur_x = joystick_channel(GYRO_X);
     int cur_y = joystick_channel(GYRO_Y);
 
+    // Figure out the velocity of the controller
     int x = cur_x - last_x;
     int y = cur_y - last_y;
 
+    // Give wiggle room for noise
     x = abs(x) <= 1 ? 0 : x;
     y = abs(y) <= 1 ? 0 : y;
 
     last_x = cur_x;
     last_y = cur_y;
 
-    if (x == 0 && y == 0 && (cur_x != 0 || cur_y != 0)) {
+    // If X and Y velocity are 0, and either X or Y isn't currently at 0 degrees, start the timer
+    if (x == 0 && y == 0 && (cur_x != 0 || cur_y != 0))
       afk_timer += 20;
-    } else {
+    else
       afk_timer = 0;
-    }
+
   } else {
     afk_timer = 0;
   }
 
+  // Once the timer has reached 2000, disable everything on the robot
   if (afk_timer >= 2000) {
     controller_switch_timer = false;
     startup_switch_output = false;
     last_switch_state = true;
     controller_switch_timer = 0;
+    afk_timer = 0;
     return;
   }
 
