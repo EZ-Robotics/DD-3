@@ -15,14 +15,14 @@ Servo R_MOTOR;  // create servo object to control the ESC
 // Account for slight speed difference between left and right
 void drive_set_raw(double l, double r) {
   // If switch is disabled...
-  if (drive_switch_enabled()) {
+  /*if (drive_switch_enabled()) {
     l = 0;
     r = 0;
     l = l - 5;
     L_MOTOR.write(map(l, -127, 127, 0, 180));  // Send the signal to the ESC
     R_MOTOR.write(map(r, -127, 127, 0, 180));  // Send the signal to the ESC
     return;
-  }
+  }*/
 
   // If switch is enabled...
   l = l - 5;
@@ -41,25 +41,44 @@ void drive_init() {
 // Slew the drive motors to avoid changes in motion that are too large
 double l_target = 0.0, r_target = 0.0;
 double l_current = 0.0, r_current = 0.0;
-const double MAX = 2;
+const double MAX = 3;
+const double MIN = 1.5;
 void drive_set(double l, double r) {
   if (drive_switch_enabled()) {
-    l_target = r_target = r_current = l_current = 0.0;
-    drive_set_raw(l_target, r_target);
-    return;
+    // l_target = r_target = r_current = l_current = 0.0;
+    // drive_set_raw(l_target, r_target);
+    // return;
+    l_target = 0;
+    r_target = 0;
+  } else {
+    l_target = l;
+    r_target = r;
   }
-  l_target = l;
-  r_target = r;
+
+  double l_error = l_target - l_current;
+  double r_error = r_target - r_current;
+
+  double used_max = MAX;
+
+  if (l_error > 0 || r_error > 0) {
+    used_max = MAX;
+  } else if (l_error < 0 && r_error < 0) {
+    used_max = MIN;
+  }
 
   double max = fmax(fabs(l_target), fabs(r_target));
   double min = fmin(fabs(l_target), fabs(r_target));
-  double l_add = MAX, r_add = MAX;
+
+  max = max == 0 ? 1 : max;
+  min = min == 0 ? 1 : max;
+
+  double l_add = used_max, r_add = used_max;
   if (fabs(l_target) > fabs(r_target)) {
-    l_add = MAX;
-    r_add = MAX * (min / max);
+    l_add = used_max;
+    r_add = used_max * (min / max);
   } else if (fabs(l_target) < fabs(r_target)) {
-    l_add = MAX * (min / max);
-    r_add = MAX;
+    l_add = used_max * (min / max);
+    r_add = used_max;
   }
 
   if (l_current > l_target)
@@ -71,6 +90,25 @@ void drive_set(double l, double r) {
     r_current -= r_add;
   else if (r_current < r_target)
     r_current += r_add;
+
+  Serial.print(used_max);
+  Serial.print("\t\t");
+  Serial.print(l_add);
+  Serial.print("\t");
+  Serial.print(r_add);
+  Serial.print("\t\t");
+  Serial.print(l_error);
+  Serial.print("\t");
+  Serial.print(r_error);
+  Serial.print("\t\t");
+  Serial.print(l_current);
+  Serial.print("\t");
+  Serial.print(r_current);
+  Serial.print("\t\t");
+  Serial.print(l_target);
+  Serial.print("\t");
+  Serial.print(r_target);
+  Serial.print("\n");
 
   drive_set_raw(l_current, r_current);
 }

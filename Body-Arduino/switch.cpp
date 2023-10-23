@@ -44,6 +44,23 @@ bool drive_switch_enabled() {
   return false;
 }
 
+int right_y_vel = 0, right_x_vel = 0, left_y_vel = 0, left_x_vel = 0;
+int last_right_y = 0, last_right_x = 0, last_left_y = 0, last_left_x = 0;
+int joy_vel_timer = 0;
+
+bool are_joysticks_running() {
+  if (right_y_vel == 0 && right_x_vel == 0 && left_y_vel == 0 && left_x_vel == 0) {
+    if (joy_vel_timer >= 1000)
+      return false;
+
+    joy_vel_timer += 20;
+  } else {
+    joy_vel_timer = 0;
+  }
+
+  return true;
+}
+
 int xx = 0, yy = 0;
 
 int controller_switch_timer = 0;
@@ -52,6 +69,16 @@ bool last_switch_state = false;
 int last_x = 0, last_y = 0;
 int afk_timer = 0;
 void switch_runtime() {
+  right_y_vel = joystick_channel(RIGHT_Y) - last_right_y;
+  right_x_vel = joystick_channel(RIGHT_X) - last_right_x;
+  left_y_vel = joystick_channel(LEFT_Y) - last_left_y;
+  left_x_vel = joystick_channel(LEFT_X) - last_left_x;
+
+  last_right_y = joystick_channel(RIGHT_Y);
+  last_right_x = joystick_channel(RIGHT_X);
+  last_left_y = joystick_channel(LEFT_Y);
+  last_left_x = joystick_channel(LEFT_X);
+
   // Don't let this function run for the first 3 seconds of program running
   starter_timer += 20;
   if (starter_timer <= 3000) {
@@ -78,7 +105,7 @@ void switch_runtime() {
   ///
 
   // Disable drive if the controller is set down for a certain amount of time
-  if (controller_switch_output) {
+  if (controller_switch_output & !are_joysticks_running()) {
     // Current values
     int cur_x = joystick_channel(GYRO_X);
     int cur_y = joystick_channel(GYRO_Y);
@@ -88,8 +115,8 @@ void switch_runtime() {
     int y = cur_y - last_y;
 
     // Give wiggle room for noise
-    x = abs(x) <= 1 ? 0 : x;
-    y = abs(y) <= 1 ? 0 : y;
+    // x = abs(x) <= 1 ? 0 : x;
+    // y = abs(y) <= 1 ? 0 : y;
 
     last_x = cur_x;
     last_y = cur_y;
