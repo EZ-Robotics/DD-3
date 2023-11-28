@@ -44,11 +44,13 @@ void profile(int target) {
 
   // Check if the motion is large enough that there is cruise time
   if (dist_to_accel + dist_to_decel < fabs(error)) {
+    printf("error > \n\n\n");
     steps_to_cruise = (fabs(error) - (dist_to_accel + dist_to_decel)) / MAX_VELOCITY;  // Distance remaining after accel and decel
   }
 
   // If there is no cruise time, we have to figure out when to switch accel to decel
   else {
+    printf("error < \n\n\n");
     // Area of the velocity/time graph, aka distance we have to go
     double area = fabs(error);
 
@@ -70,16 +72,19 @@ void profile(int target) {
     // Find the bottom leg of triangle
     steps_to_accel = cos(accel_angle) * accel_hyp;
     steps_to_decel = cos(decel_angle) * decel_hyp;
+    steps_to_cruise = 0.0;
+
+    dist_to_accel = ((sqrt(pow(accel_hyp, 2) - pow(steps_to_accel, 2))) * steps_to_accel) / 2.0;
+    dist_to_decel = ((sqrt(pow(decel_hyp, 2) - pow(steps_to_decel, 2))) * steps_to_decel) / 2.0;
 
     // This is just for double checking above works
-    /*
+
     double calculated_accel_area = ((sqrt(pow(accel_hyp, 2) - pow(steps_to_accel, 2))) * steps_to_accel) / 2.0;
     double calculated_decel_area = ((sqrt(pow(decel_hyp, 2) - pow(steps_to_decel, 2))) * steps_to_decel) / 2.0;
     cout << rad_to_deg(accel_angle) << " " << rad_to_deg(decel_angle) << " " << rad_to_deg(z) << "\n";
     cout << accel_hyp << " " << decel_hyp << "\n";
     cout << steps_to_accel << " " << steps_to_decel << "    " << z_dist << "\n";
-    cout << calculated_accel_area + calculated_decel_area << "\n\n";
-    */
+    cout << calculated_accel_area << "\t" << calculated_accel_area + calculated_decel_area << "\n\n";
   }
 
   // Total steps needed to take
@@ -144,5 +149,5 @@ void profile(int target) {
 }
 
 int main() {
-  profile(180);
+  profile(30);
 }

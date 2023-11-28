@@ -41,8 +41,8 @@ void drive_init() {
 // Slew the drive motors to avoid changes in motion that are too large
 double l_target = 0.0, r_target = 0.0;
 double l_current = 0.0, r_current = 0.0;
-const double MAX = 3;
-const double MIN = 1.5;
+const double MAX = 2;
+const double MIN = 1;
 void drive_set(double l, double r) {
   if (drive_switch_enabled()) {
     // l_target = r_target = r_current = l_current = 0.0;
@@ -91,6 +91,7 @@ void drive_set(double l, double r) {
   else if (r_current < r_target)
     r_current += r_add;
 
+  /*
   Serial.print(used_max);
   Serial.print("\t\t");
   Serial.print(l_add);
@@ -109,6 +110,7 @@ void drive_set(double l, double r) {
   Serial.print("\t");
   Serial.print(r_target);
   Serial.print("\n");
+  */
 
   drive_set_raw(l_current, r_current);
 }
