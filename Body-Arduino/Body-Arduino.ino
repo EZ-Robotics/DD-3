@@ -42,7 +42,7 @@ void loop() {
       eye_counter = 0;
     }
 
-  // Head will randomly tilt
+    // Head will randomly tilt
     if (head_tilt_counter >= 5000) {
       head_tilt_set(random(-100, 100));
       head_tilt_counter = 0;

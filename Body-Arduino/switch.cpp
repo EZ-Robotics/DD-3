@@ -115,8 +115,8 @@ void switch_runtime() {
     int y = cur_y - last_y;
 
     // Give wiggle room for noise
-    // x = abs(x) <= 1 ? 0 : x;
-    // y = abs(y) <= 1 ? 0 : y;
+    x = abs(x) <= 1 ? 0 : x;
+    y = abs(y) <= 1 ? 0 : y;
 
     last_x = cur_x;
     last_y = cur_y;
