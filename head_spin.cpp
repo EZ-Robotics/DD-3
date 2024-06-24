@@ -52,5 +52,5 @@ void head_spin_set(int input) {
 
 // Make the head spin based on user inputs
 void head_spin_runtime() {
-  head_spin_set(joystick_channel(CH1));
+  head_spin_set(joystick_channel(LEFT_SLIDER) - 127);
 }

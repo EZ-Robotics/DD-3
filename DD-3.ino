@@ -34,6 +34,11 @@ void loop() {
   head_spin_runtime();
   drive_runtime();
 
+  eyebrows_runtime();
+  head_tilt_runtime();
+
+
+  /*
   if (joystick_channel(RIGHT_DUAL_SWTICH) == UP) {
     // Eye will randomly look somewhere
     if (eye_counter >= 2000) {
@@ -73,6 +78,7 @@ void loop() {
     eye_counter = 0;
     head_tilt_counter = 0;
   }
+  */
 
   /*
   Serial.print(switch_enabled());
