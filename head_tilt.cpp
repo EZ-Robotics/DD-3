@@ -1,11 +1,12 @@
 #include <Adafruit_PWMServoDriver.h>
 
+#include "head_spin.hpp"
 #include "joysticks.hpp"
 #include "servoboard.hpp"
 #include "switch.hpp"
 
-#define SERVOMIN 550
-#define SERVOMAX 390
+#define SERVOMIN 530  // 550
+#define SERVOMAX 400  // 390
 
 #define CENTER_SERVO 6            // unmarked channel on PCA9685
 #define CENTER_SERVOMIN SERVOMIN  // This is the 'minimum' pulse length count (out of 4096)
@@ -49,30 +50,33 @@ void head_tilt_set(int height, int forward, int tilt) {
 }
 
 void head_tilt_runtime() {
-  float height = joystick_channel(RIGHT_SLIDER) - 127.0;
-  float forward = joystick_channel(RIGHT_Y);
-  float tilt = joystick_channel(RIGHT_X);
+  float height = joystick_channel(LEFT_SLIDER) - 127;
+  float og_forward = joystick_channel(RIGHT_Y);
+  float og_tilt = joystick_channel(RIGHT_X);
+
+  float ratio = fabs(HEAD_POSITION) / 127.0;
+  // forward = (ratio * tilt) + (ratio2 * forward);
+  // tilt = (ratio * forward) + (ratio2 * tilt);
+
+  // float forward = ((1 - ratio) * og_forward);
+  // float tilt = ((HEAD_POSITION / 127.0) * og_forward);
+
+  float tilt = ((1 - ratio) * og_tilt) + ((HEAD_POSITION / 127.0) * og_forward);
+  float forward = ((HEAD_POSITION / -127.0) * og_tilt) + ((1 - ratio) * og_forward);
+
+  Serial.print("pre: ");
+  Serial.print(og_forward);
+  Serial.print("\t");
+  Serial.print(og_tilt);
+  Serial.print("\t\t");
+  Serial.print("post: ");
+  Serial.print(forward);
+  Serial.print("\t");
+  Serial.print(tilt);
+  Serial.println("");
 
   HEAD_TILT_CURRENT = tilt;
   HEAD_HEIGHT_CURRENT = height;
 
   head_tilt_set((int)height, (int)forward, (int)tilt);
 }
-
-/*
-Serial.print(switch_enabled());
-Serial.print("\t\t\t");
-Serial.print("height: ");
-Serial.print(height);
-Serial.print("\tfwd: ");
-Serial.print(forward);
-Serial.print("\ttilt: ");
-Serial.print(tilt);
-Serial.print("\t\tcenter: ");
-Serial.print(servo_center);
-Serial.print("\tright: ");
-Serial.print(servo_right);
-Serial.print("\tleft: ");
-Serial.print(servo_left);
-Serial.print("\n");
-*/

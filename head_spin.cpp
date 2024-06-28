@@ -15,7 +15,7 @@ double sgn(double x) {
   return 0;
 }
 
-double prev_current = 0, pid_target = 0, integral = 0, prev_error = 0, output = 0, SPIN_VELOCITY = 0;
+double prev_current = 0, pid_target = 0, integral = 0, prev_error = 0, output = 0, derivative = 0, SPIN_VELOCITY = 0, HEAD_POSITION = 0;
 bool reset_i_sgn = true;
 double kp = 1;
 double ki = 0;
@@ -26,8 +26,7 @@ double iterate_pid(double current) {
 
   // calculate derivative on measurement instead of error to avoid "derivative kick"
   // https://www.isa.org/intech-home/2023/june-2023/features/fundamentals-pid-control
-  double derivative = current - prev_current;
-  SPIN_VELOCITY = derivative;
+  derivative = current - prev_current;
 
   if (ki != 0) {
     // Only compute i when within a threshold of target
@@ -79,7 +78,7 @@ void head_spin_init() {
 #define HEAD_LEFT 200
 #define HEAD_RIGHT 920
 void set_pid_target(double target) {
-  pid_target = map(target, 127, -127, HEAD_LEFT, HEAD_RIGHT);
+  pid_target = map(target, -127, 127, HEAD_LEFT, HEAD_RIGHT);
 }
 
 // Sets the head to spin if the switch isn't enabled
@@ -107,8 +106,10 @@ double get_pot() {
 // Make the head spin based on user inputs
 void head_spin_runtime() {
   // head_spin_set(joystick_channel(LEFT_SLIDER) - 127);
-  set_pid_target(joystick_channel(LEFT_SLIDER) - 127);
-  head_spin_set(iterate_pid(get_pot()));
+  set_pid_target(joystick_channel(RIGHT_SLIDER) - 127.0);
 
-  // Serial.println(error);
+  SPIN_VELOCITY = derivative;
+  HEAD_POSITION = map(get_pot(), HEAD_LEFT - 50, HEAD_RIGHT + 50, -127, 127);
+
+  head_spin_set(iterate_pid(get_pot()));
 }
