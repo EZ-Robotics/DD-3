@@ -8,9 +8,9 @@
 #define SERVOMIN 530  // 550
 #define SERVOMAX 400  // 390
 
-#define CENTER_SERVO 6            // unmarked channel on PCA9685
-#define CENTER_SERVOMIN SERVOMIN  // This is the 'minimum' pulse length count (out of 4096)
-#define CENTER_SERVOMAX SERVOMAX  // This is the 'maximum' pulse length count (out of 4096)
+#define CENTER_SERVO 6                 // unmarked channel on PCA9685
+#define CENTER_SERVOMIN SERVOMIN - 30  // This is the 'minimum' pulse length count (out of 4096)
+#define CENTER_SERVOMAX SERVOMAX - 15  // This is the 'maximum' pulse length count (out of 4096)
 
 #define RIGHT_SERVO 5            // 6th port on servo board
 #define RIGHT_SERVOMIN SERVOMIN  // This is the 'minimum' pulse length count (out of 4096)
@@ -50,20 +50,28 @@ void head_tilt_set(int height, int forward, int tilt) {
 }
 
 void head_tilt_runtime() {
-  float height = joystick_channel(LEFT_SLIDER) - 127;
-  float og_forward = joystick_channel(RIGHT_Y);
-  float og_tilt = joystick_channel(RIGHT_X);
+  // height, forward, tilt values from the controller
+  float height = joystick_channel(LEFT_SLIDER);
+  float controller_forward = joystick_channel(RIGHT_Y);
+  float controller_tilt = joystick_channel(RIGHT_X);
 
+  // tilt and forward values computed off of head spin velocity
+  float spin_tilt = SPIN_VELOCITY * (0.3125 * (height / 256));
+  // float spin_tilt = controller_tilt;
+  float spin_forward = -fabs(SPIN_VELOCITY) * (0.25 * (height / 256));
+  // float spin_forward = fabs(SPIN_VELOCITY);
+  Serial.println(height);
+
+  // use the larger of the 2 computed values
+  float computed_tilt = fabs(spin_tilt) > fabs(controller_tilt) ? spin_tilt : controller_tilt;
+  float computed_forward = fabs(spin_forward) > fabs(controller_forward) ? spin_forward : controller_forward;
+
+  // scale everything to be relative to where the head is facing
   float ratio = fabs(HEAD_POSITION) / 127.0;
-  // forward = (ratio * tilt) + (ratio2 * forward);
-  // tilt = (ratio * forward) + (ratio2 * tilt);
+  float tilt = ((1 - ratio) * computed_tilt) + ((HEAD_POSITION / 127.0) * computed_forward);
+  float forward = ((HEAD_POSITION / -127.0) * computed_tilt) + ((1 - ratio) * computed_forward);
 
-  // float forward = ((1 - ratio) * og_forward);
-  // float tilt = ((HEAD_POSITION / 127.0) * og_forward);
-
-  float tilt = ((1 - ratio) * og_tilt) + ((HEAD_POSITION / 127.0) * og_forward);
-  float forward = ((HEAD_POSITION / -127.0) * og_tilt) + ((1 - ratio) * og_forward);
-
+  /*
   Serial.print("pre: ");
   Serial.print(og_forward);
   Serial.print("\t");
@@ -74,9 +82,14 @@ void head_tilt_runtime() {
   Serial.print("\t");
   Serial.print(tilt);
   Serial.println("");
+  */
 
+  height -= 127;
+
+  // make the head move
+  head_tilt_set((int)height, (int)forward, (int)tilt);
+
+  // set globals
   HEAD_TILT_CURRENT = tilt;
   HEAD_HEIGHT_CURRENT = height;
-
-  head_tilt_set((int)height, (int)forward, (int)tilt);
 }

@@ -108,7 +108,8 @@ void head_spin_runtime() {
   // head_spin_set(joystick_channel(LEFT_SLIDER) - 127);
   set_pid_target(joystick_channel(RIGHT_SLIDER) - 127.0);
 
-  SPIN_VELOCITY = derivative;
+  // SPIN_VELOCITY = derivative;
+  SPIN_VELOCITY = pid_target - get_pot();
   HEAD_POSITION = map(get_pot(), HEAD_LEFT - 50, HEAD_RIGHT + 50, -127, 127);
 
   head_spin_set(iterate_pid(get_pot()));
