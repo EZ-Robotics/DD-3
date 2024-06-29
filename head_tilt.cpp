@@ -8,9 +8,9 @@
 #define SERVOMIN 530  // 550
 #define SERVOMAX 400  // 390
 
-#define CENTER_SERVO 6                 // unmarked channel on PCA9685
-#define CENTER_SERVOMIN SERVOMIN - 30  // This is the 'minimum' pulse length count (out of 4096)
-#define CENTER_SERVOMAX SERVOMAX - 15  // This is the 'maximum' pulse length count (out of 4096)
+#define CENTER_SERVO 6            // unmarked channel on PCA9685
+#define CENTER_SERVOMIN SERVOMIN - 15  // This is the 'minimum' pulse length count (out of 4096)
+#define CENTER_SERVOMAX SERVOMAX  // This is the 'maximum' pulse length count (out of 4096)
 
 #define RIGHT_SERVO 5            // 6th port on servo board
 #define RIGHT_SERVOMIN SERVOMIN  // This is the 'minimum' pulse length count (out of 4096)
@@ -25,6 +25,7 @@ int HEAD_HEIGHT_CURRENT;
 
 void head_tilt_set(int height, int forward, int tilt) {
   if (!switch_enabled()) return;
+  if (is_sleep) return;
 
   float servo_center = height + forward;
   float servo_right = height - (0.666 * tilt) - (0.333 * forward);
@@ -60,7 +61,7 @@ void head_tilt_runtime() {
   // float spin_tilt = controller_tilt;
   float spin_forward = -fabs(SPIN_VELOCITY) * (0.25 * (height / 256));
   // float spin_forward = fabs(SPIN_VELOCITY);
-  Serial.println(height);
+  // Serial.println(height);
 
   // use the larger of the 2 computed values
   float computed_tilt = fabs(spin_tilt) > fabs(controller_tilt) ? spin_tilt : controller_tilt;
@@ -90,6 +91,6 @@ void head_tilt_runtime() {
   head_tilt_set((int)height, (int)forward, (int)tilt);
 
   // set globals
-  HEAD_TILT_CURRENT = tilt;
+  HEAD_TILT_CURRENT = computed_tilt;
   HEAD_HEIGHT_CURRENT = height;
 }

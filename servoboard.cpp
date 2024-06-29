@@ -9,3 +9,13 @@ void servoboard_init() {
   pwm.setOscillatorFrequency(27000000);
   pwm.setPWMFreq(SERVO_FREQ);  // Analog servos run at ~50 Hz updates
 }
+
+bool is_sleep = false;
+void servoboard_sleep(bool input) {
+  is_sleep = input;
+  if (input) {
+    pwm.sleep();
+  } else {
+    pwm.wakeup();
+  }
+}

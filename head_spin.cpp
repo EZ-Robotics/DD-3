@@ -19,7 +19,7 @@ double prev_current = 0, pid_target = 0, integral = 0, prev_error = 0, output = 
 bool reset_i_sgn = true;
 double kp = 1;
 double ki = 0;
-double kd = 1;
+double kd = 2;
 double start_i = 0;
 double iterate_pid(double current) {
   double error = pid_target - current;
