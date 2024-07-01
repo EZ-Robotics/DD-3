@@ -28,74 +28,25 @@ int eyebrow_breath = 127;
 bool flipped = false;
 int add_value = 3;
 
+_switch last_pos = DOWN;
+
 void loop() {
   switch_runtime();
   joystick_runtime();
   head_spin_runtime();
   drive_runtime();
 
-  eyebrows_runtime();
+  // eyebrows_runtime();
   head_tilt_runtime();
 
+  _switch cur = joystick_channel(RIGHT_DUAL_SWTICH);
 
-  /*
-  if (joystick_channel(RIGHT_DUAL_SWTICH) == UP) {
-    // Eye will randomly look somewhere
-    if (eye_counter >= 2000) {
-      eye_x_set(random(-70, 70));
-      eye_y_set(random(-70, 70));
-      eye_counter = 0;
-    }
-
-    // Head will randomly tilt
-    if (head_tilt_counter >= 5000) {
-      head_tilt_set(random(-100, 100));
-      head_tilt_counter = 0;
-    }
-
-    eye_counter += 20;
-    head_tilt_counter += 20;
-
-    // Eyebrows will slowly go in and out
-    if (eyebrow_breath <= -127) {
-      flipped = true;
-    }
-    if (eyebrow_breath >= 127) {
-      flipped = false;
-    }
-
-    if (!flipped) {
-      eyebrow_breath -= add_value;
-    } else {
-      eyebrow_breath += add_value;
-    }
-    eyebrow_left_set(eyebrow_breath);
-    eyebrow_right_set(eyebrow_breath);
-  } else {
-    eye_runtime();
-    eyebrows_runtime();
-    head_tilt_runtime();
-    eye_counter = 0;
-    head_tilt_counter = 0;
+  if (cur == UP && last_pos != cur) {
+    servoboard_sleep(true);
+  } else if (cur == DOWN && last_pos != cur) {
+    servoboard_sleep(false);
   }
-  */
+  last_pos = cur;
 
-  /*
-  Serial.print(switch_enabled());
-  Serial.print("\t");
-  Serial.print(joystick_channel(CH1));
-  Serial.print("\t");
-  Serial.print(joystick_channel(CH2));
-  Serial.print("\t");
-  Serial.print(joystick_channel(CH3));
-  Serial.print("\t");
-  Serial.print(joystick_channel(CH4));
-  Serial.print("\n");
-  */
-
-  // eye_runtime();
-  // eyebrows_runtime();
-  // body_to_head_send();
-
-  delay(20);  // This must be longer then Head-Teensy.ino delay!
+  delay(10);
 }

@@ -4,8 +4,8 @@
 #include "servoboard.hpp"
 #include "switch.hpp"
 
-#define SERVO_MIN 300
-#define SERVO_MAX 400
+#define SERVO_MIN 350
+#define SERVO_MAX 425
 
 // Eyebrow Right
 #define EYEBROW_RIGHT_MIN SERVO_MIN
@@ -30,6 +30,7 @@ void eyebrow_left_set(int input) {
 }
 
 void eyebrows_runtime() {
+  /*
   double left = -HEAD_HEIGHT_CURRENT + HEAD_TILT_CURRENT;
   double right = -HEAD_HEIGHT_CURRENT - HEAD_TILT_CURRENT;
 
@@ -39,10 +40,21 @@ void eyebrows_runtime() {
     left = left * scale;
     right = right * scale;
   }
+  */
 
-  eyebrow_left_set(left);
-  eyebrow_right_set(right);
+  float left = HEAD_TILT_CURRENT;
+  float right = -HEAD_TILT_CURRENT;
 
-  // eyebrow_left_set(joystick_channel(RIGHT_SLIDER) - 127);
-  // eyebrow_right_set(joystick_channel(RIGHT_SLIDER) - 127);
+  Serial.print(joystick_channel(RIGHT_SLIDER) - 127);
+  Serial.print("\t\t");
+  Serial.print(HEAD_TILT_CURRENT);
+  Serial.print("\t\t");
+  Serial.print(left);
+  Serial.print("\t");
+  Serial.print(right);
+  Serial.print("\n");
+
+  //eyebrow_right_set(joystick_channel(RIGHT_SLIDER) - 127);
+   eyebrow_left_set(-left);
+   eyebrow_right_set(left);
 }
